@@ -154,83 +154,47 @@ public enum DataType {
      * @return kdb+ type number for an object
      */
     public static DataType getKdbType(final Object x) {
-        if (x instanceof Boolean)
-            return Boolean;
-        if (x instanceof java.util.UUID)
-            return UUID;
-        if (x instanceof Byte)
-            return Byte;
-        if (x instanceof Short)
-            return Short;
-        if (x instanceof Integer)
-            return Integer;
-        if (x instanceof Long)
-            return Long;
-        if (x instanceof Float)
-            return Float;
-        if (x instanceof Double)
-            return Double;
-        if (x instanceof Character)
-            return Character;
-        if (x instanceof String)
-            return String;
-        if (x instanceof java.time.LocalDate)
-            return LocalDate;
-        if (x instanceof java.time.LocalTime)
-            return LocalTime;
-        if (x instanceof java.time.Instant)
-            return Instant;
-        if (x instanceof java.time.LocalDateTime)
-            return LocalDateTime;
-        if (x instanceof Timespan)
-            return Timespan;
-        if (x instanceof Month)
-            return Month;
-        if (x instanceof Minute)
-            return Minute;
-        if (x instanceof Second)
-            return Second;
-        if (x instanceof boolean[])
-            return BooleanArray;
-        if (x instanceof UUID[])
-            return UUIDArray;
-        if (x instanceof byte[])
-            return ByteArray;
-        if (x instanceof short[])
-            return ShortArray;
-        if (x instanceof int[])
-            return IntArray;
-        if (x instanceof long[])
-            return LongArray;
-        if (x instanceof float[])
-            return FloatArray;
-        if (x instanceof double[])
-            return DoubleArray;
-        if (x instanceof char[])
-            return CharArray;
-        if (x instanceof String[])
-            return StringArray;
-        if (x instanceof LocalDate[])
-            return LocalDateArray;
-        if (x instanceof LocalTime[])
-            return LocalTimeArray;
-        if (x instanceof Instant[])
-            return InstantArray;
-        if (x instanceof LocalDateTime[])
-            return LocalDateTimeArray;
-        if (x instanceof Timespan[])
-            return TimespanArray;
-        if (x instanceof Month[])
-            return MonthArray;
-        if (x instanceof Minute[])
-            return MinuteArray;
-        if (x instanceof Second[])
-            return SecondArray;
-        if (x instanceof Flip)
-            return Flip;
-        if (x instanceof Dict)
-            return Dict;
-        return List;
+        return switch (x) {
+            case Boolean ignored -> Boolean;
+            case java.util.UUID ignored -> UUID;
+            case Byte ignored -> Byte;
+            case Short ignored -> Short;
+            case Integer ignored -> Integer;
+            case Long ignored -> Long;
+            case Float ignored -> Float;
+            case Double ignored -> Double;
+            case Character ignored -> Character;
+            case String ignored -> String;
+            case java.time.LocalDate ignored -> LocalDate;
+            case java.time.LocalTime ignored -> LocalTime;
+            case java.time.Instant ignored -> Instant;
+            case java.time.LocalDateTime ignored -> LocalDateTime;
+            case Timespan ignored -> Timespan;
+            case Month ignored -> Month;
+            case Minute ignored -> Minute;
+            case Second ignored -> Second;
+            case boolean[] ignored -> BooleanArray;
+            case UUID[] ignored -> UUIDArray;
+            case byte[] ignored -> ByteArray;
+            case short[] ignored -> ShortArray;
+            case int[] ignored -> IntArray;
+            case long[] ignored -> LongArray;
+            case float[] ignored -> FloatArray;
+            case double[] ignored -> DoubleArray;
+            case char[] ignored -> CharArray;
+            case String[] ignored -> StringArray;
+            case LocalDate[] ignored -> LocalDateArray;
+            case LocalTime[] ignored -> LocalTimeArray;
+            case Instant[] ignored -> InstantArray;
+            case LocalDateTime[] ignored -> LocalDateTimeArray;
+            case Timespan[] ignored -> TimespanArray;
+            case Month[] ignored -> MonthArray;
+            case Minute[] ignored -> MinuteArray;
+            case Second[] ignored -> SecondArray;
+            case Flip ignored -> Flip;
+            case Dict ignored -> Dict;
+            default -> List;
+        };
     }
 
     public static DataType getKdbType(final byte typeCode) {

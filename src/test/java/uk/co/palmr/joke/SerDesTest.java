@@ -43,30 +43,6 @@ public class SerDesTest {
         buffer = ByteBuffer.allocate(128);
     }
 
-    private void assertSerDesAtom(final Object data) {
-        try {
-            kdbProtocol.serialise(data, buffer);
-
-            buffer.position(0);
-
-            assertEquals(data, kdbProtocol.deserialiseResponseMessage(buffer));
-        } catch (UnsupportedEncodingException | KdbException e) {
-            fail(e);
-        }
-    }
-
-    private void assertSerDesArray(final Object[] data) {
-        try {
-            kdbProtocol.serialise(data, buffer);
-
-            buffer.position(0);
-
-            assertArrayEquals(data, (Object[]) kdbProtocol.deserialiseResponseMessage(buffer));
-        } catch (UnsupportedEncodingException | KdbException e) {
-            fail(e);
-        }
-    }
-
     @Test
     public void testSerializeDeserializeBool() {
         assertSerDesAtom(Boolean.TRUE);
@@ -211,7 +187,7 @@ public class SerDesTest {
 
     @Test
     public void testSerializeDeserializeBoolArray() {
-        final Boolean[] input = new Boolean[2];
+        final boolean[] input = new boolean[2];
         input[0] = true;
         input[1] = false;
 
@@ -229,7 +205,7 @@ public class SerDesTest {
 
     @Test
     public void testSerializeDeserializeByteArray() {
-        final Byte[] input = new Byte[2];
+        final byte[] input = new byte[2];
         input[0] = Byte.MIN_VALUE;
         input[1] = Byte.MAX_VALUE;
 
@@ -238,7 +214,7 @@ public class SerDesTest {
 
     @Test
     public void testSerializeDeserializeShortArray() {
-        final Short[] input = new Short[2];
+        final short[] input = new short[2];
         input[0] = Short.MIN_VALUE;
         input[1] = Short.MAX_VALUE;
 
@@ -247,7 +223,7 @@ public class SerDesTest {
 
     @Test
     public void testSerializeDeserializeIntArray() {
-        final Integer[] input = new Integer[2];
+        final int[] input = new int[2];
         input[0] = Integer.MIN_VALUE;
         input[1] = Integer.MAX_VALUE;
 
@@ -256,7 +232,7 @@ public class SerDesTest {
 
     @Test
     public void testSerializeDeserializeLongArray() {
-        final Long[] input = new Long[2];
+        final long[] input = new long[2];
         input[0] = Long.MIN_VALUE;
         input[1] = Long.MAX_VALUE;
 
@@ -265,7 +241,7 @@ public class SerDesTest {
 
     @Test
     public void testSerializeDeserializeFloatArray() {
-        final Float[] input = new Float[2];
+        final float[] input = new float[2];
         input[0] = Float.MIN_VALUE;
         input[1] = Float.MAX_VALUE;
 
@@ -274,7 +250,7 @@ public class SerDesTest {
 
     @Test
     public void testSerializeDeserializeDoubleArray() {
-        final Double[] input = new Double[2];
+        final double[] input = new double[2];
         input[0] = Double.MIN_VALUE;
         input[1] = Double.MAX_VALUE;
 
@@ -283,7 +259,7 @@ public class SerDesTest {
 
     @Test
     public void testSerializeDeserializeCharArray() {
-        final Character[] input = new Character[2];
+        final char[] input = new char[2];
         input[0] = 'a';
         input[1] = 'b';
 
@@ -462,5 +438,125 @@ public class SerDesTest {
     @Test
     public void testStringLenForNullTerminatedInput() throws UnsupportedEncodingException {
         assertEquals(2, kdbProtocol.lengthOfEncodedString(new String(new char[]{'H', 'i', 0x00, 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', '!'})));
+    }
+
+    private void assertSerDesAtom(final Object data) {
+        try {
+            kdbProtocol.serialise(data, buffer);
+
+            buffer.position(0);
+
+            assertEquals(data, kdbProtocol.deserialiseResponseMessage(buffer));
+        } catch (UnsupportedEncodingException | KdbException e) {
+            fail(e);
+        }
+    }
+
+    private void assertSerDesArray(final Object[] data) {
+        try {
+            kdbProtocol.serialise(data, buffer);
+
+            buffer.position(0);
+
+            assertArrayEquals(data, (Object[]) kdbProtocol.deserialiseResponseMessage(buffer));
+        } catch (UnsupportedEncodingException | KdbException e) {
+            fail(e);
+        }
+    }
+
+    private void assertSerDesArray(final boolean[] data) {
+        try {
+            kdbProtocol.serialise(data, buffer);
+
+            buffer.position(0);
+
+            assertArrayEquals(data, (boolean[]) kdbProtocol.deserialiseResponseMessage(buffer));
+        } catch (UnsupportedEncodingException | KdbException e) {
+            fail(e);
+        }
+    }
+
+    private void assertSerDesArray(final byte[] data) {
+        try {
+            kdbProtocol.serialise(data, buffer);
+
+            buffer.position(0);
+
+            assertArrayEquals(data, (byte[]) kdbProtocol.deserialiseResponseMessage(buffer));
+        } catch (UnsupportedEncodingException | KdbException e) {
+            fail(e);
+        }
+    }
+
+    private void assertSerDesArray(final short[] data) {
+        try {
+            kdbProtocol.serialise(data, buffer);
+
+            buffer.position(0);
+
+            assertArrayEquals(data, (short[]) kdbProtocol.deserialiseResponseMessage(buffer));
+        } catch (UnsupportedEncodingException | KdbException e) {
+            fail(e);
+        }
+    }
+
+    private void assertSerDesArray(final int[] data) {
+        try {
+            kdbProtocol.serialise(data, buffer);
+
+            buffer.position(0);
+
+            assertArrayEquals(data, (int[]) kdbProtocol.deserialiseResponseMessage(buffer));
+        } catch (UnsupportedEncodingException | KdbException e) {
+            fail(e);
+        }
+    }
+
+    private void assertSerDesArray(final long[] data) {
+        try {
+            kdbProtocol.serialise(data, buffer);
+
+            buffer.position(0);
+
+            assertArrayEquals(data, (long[]) kdbProtocol.deserialiseResponseMessage(buffer));
+        } catch (UnsupportedEncodingException | KdbException e) {
+            fail(e);
+        }
+    }
+
+    private void assertSerDesArray(final float[] data) {
+        try {
+            kdbProtocol.serialise(data, buffer);
+
+            buffer.position(0);
+
+            assertArrayEquals(data, (float[]) kdbProtocol.deserialiseResponseMessage(buffer));
+        } catch (UnsupportedEncodingException | KdbException e) {
+            fail(e);
+        }
+    }
+
+    private void assertSerDesArray(final double[] data) {
+        try {
+            kdbProtocol.serialise(data, buffer);
+
+            buffer.position(0);
+
+            assertArrayEquals(data, (double[]) kdbProtocol.deserialiseResponseMessage(buffer));
+        } catch (UnsupportedEncodingException | KdbException e) {
+            fail(e);
+        }
+    }
+
+    private void assertSerDesArray(final char[] data) {
+        try {
+            kdbProtocol.serialise(data, buffer);
+
+            buffer.position(0);
+
+            assertArrayEquals(data, (char[]) kdbProtocol.deserialiseResponseMessage(buffer));
+        } catch (UnsupportedEncodingException | KdbException e) {
+            fail(e);
+        }
     }
 }

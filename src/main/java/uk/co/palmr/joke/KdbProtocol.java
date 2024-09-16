@@ -64,53 +64,13 @@ public class KdbProtocol {
 
     private int version = IpcVersion.KDB_IPC_VERSION;
 
-    public KdbProtocol(final String stringEncoding, final boolean allowCompression) {
+    protected KdbProtocol(final String stringEncoding, final boolean allowCompression) {
         this.stringEncoding = stringEncoding;
         this.allowCompression = allowCompression;
     }
 
-    public void setVersion(final int version) {
+    protected void setVersion(final int version) {
         this.version = version;
-    }
-
-    /**
-     * A helper function for nx, calculates the number of bytes which would be required to serialize the supplied string.
-     *
-     * @param string String to be serialized
-     * @return number of bytes required to serialise a string
-     * @throws UnsupportedEncodingException If the named charset is not supported
-     */
-    protected int lengthOfEncodedString(final String string) throws UnsupportedEncodingException {
-        if (string == null) {
-            return 0;
-        }
-
-        int nullTerminatorPosition;
-        if (-1 < (nullTerminatorPosition = string.indexOf(0x00))) {
-            return string.substring(0, nullTerminatorPosition).getBytes(stringEncoding).length;
-        } else {
-            return string.getBytes(stringEncoding).length;
-        }
-    }
-
-    /**
-     * Write String to serialization buffer
-     *
-     * @param string String to serialize
-     * @throws UnsupportedEncodingException If there is an issue with the registered encoding
-     */
-    protected void writeStringToBuffer(final String string, final ByteBuffer buffer) throws UnsupportedEncodingException {
-        if (string != null && !string.isEmpty()) {
-            final var stringBytes = encodeString(string);
-            for (int idx = 0; idx < stringBytes.length && stringBytes[idx] != NULL_BYTE; idx++) {
-                buffer.put(stringBytes[idx]);
-            }
-        }
-        buffer.put(NULL_BYTE);
-    }
-
-    private byte[] encodeString(final String string) throws UnsupportedEncodingException {
-        return string.getBytes(stringEncoding);
     }
 
     /**
@@ -143,60 +103,31 @@ public class KdbProtocol {
         }
     }
 
-    /**
-     * Calculates the number of bytes which would be required to serialize the supplied object.
-     *
-     * @param obj Object to be serialized
-     * @return number of bytes required to serialise an object.
-     * @throws UnsupportedEncodingException If the named charset is not supported
-     */
-    private int lengthOfObject(final Object obj) throws UnsupportedEncodingException {
-        DataType type = DataType.getKdbType(obj);
-        if (type == DataType.Dict) {
-            return 1 + lengthOfObject(((Dict) obj).x) + lengthOfObject(((Dict) obj).y);
-        }
-        if (type == DataType.Flip) {
-            return 3 + lengthOfObject(((Flip) obj).columnNames) + lengthOfObject(((Flip) obj).columns);
-        }
-        if (type.isAtom()) {
-            return type == DataType.String
-                    ? 2 + lengthOfEncodedString((String) obj)
-                    : 1 + type.getAtomicByteSize();
-        }
+    protected Object deserialize(final KdbMessageHeader kdbMessageHeader, final ByteBuffer messageBuffer) throws UnsupportedEncodingException, KdbException {
+        messageBuffer.order(kdbMessageHeader.getByteOrder());
 
-        int numBytes = 6;
-        int numElements = elementCount(obj);
-        if (type == DataType.List || type == DataType.StringArray) {
-            for (int idx = 0; idx < numElements; ++idx)
-                numBytes +=
-                        type == DataType.List
-                                ? lengthOfObject(((Object[]) obj)[idx])
-                                : 1 + lengthOfEncodedString(((String[]) obj)[idx]);
-        } else {
-            numBytes += numElements * type.getAtomicByteSize();
+        messageBuffer.position(KdbMessageHeader.SIZE);
+        if (kdbMessageHeader.isCompressed()) {
+            throw new UnsupportedEncodingException("Not yet implemented compression");
+//            uncompress();
         }
-        return numBytes;
+        return deserialiseResponseMessage(messageBuffer); // deserialize the message
     }
 
     /**
-     * A helper function used by nx which returns the number of elements in the supplied object
-     * (for example: the number of keys in a Dict, the number of rows in a Flip,
-     * the length of the array if its an array type)
+     * Write String to serialization buffer
      *
-     * @param obj Object to be serialized
-     * @return number of elements in an object.
-     * @throws UnsupportedEncodingException If the named charset is not supported
+     * @param string String to serialize
+     * @throws UnsupportedEncodingException If there is an issue with the registered encoding
      */
-    private int elementCount(final Object obj) throws UnsupportedEncodingException {
-        if (obj instanceof Dict) {
-            return elementCount(((Dict) obj).x);
+    protected void writeStringToBuffer(final String string, final ByteBuffer buffer) throws UnsupportedEncodingException {
+        if (string != null && !string.isEmpty()) {
+            final var stringBytes = encodeString(string);
+            for (int idx = 0; idx < stringBytes.length && stringBytes[idx] != NULL_BYTE; idx++) {
+                buffer.put(stringBytes[idx]);
+            }
         }
-        if (obj instanceof Flip) {
-            return elementCount(((Flip) obj).columns[0]);
-        }
-        return obj instanceof char[]
-                ? new String((char[]) obj).getBytes(stringEncoding).length
-                : Array.getLength(obj);
+        buffer.put(NULL_BYTE);
     }
 
     /**
@@ -357,7 +288,6 @@ public class KdbProtocol {
         }
     }
 
-
     private void serialise(boolean bool, final ByteBuffer messageBuffer) {
         messageBuffer.put((byte) (bool ? 1 : 0));
     }
@@ -460,17 +390,6 @@ public class KdbProtocol {
         messageBuffer.putInt((t == NULL_LOCAL_TIME)
                 ? NULL_INT
                 : (int) ((t.toSecondOfDay() * 1000 + t.getNano() / 1000000) % MILLS_IN_DAY));
-    }
-
-    public Object deserialize(final KdbMessageHeader kdbMessageHeader, final ByteBuffer messageBuffer) throws UnsupportedEncodingException, KdbException {
-        messageBuffer.order(kdbMessageHeader.getByteOrder());
-
-        messageBuffer.position(KdbMessageHeader.SIZE);
-        if (kdbMessageHeader.isCompressed()) {
-            throw new UnsupportedEncodingException("Not yet implemented compression");
-//            uncompress();
-        }
-        return deserialiseResponseMessage(messageBuffer); // deserialize the message
     }
 
     /**
@@ -829,5 +748,85 @@ public class KdbProtocol {
                 ? (timeAsLong + 1) / NANOS_IN_SEC - 1
                 : timeAsLong / NANOS_IN_SEC;
         return Instant.ofEpochMilli(MILLS_BETWEEN_1970_2000 + 1000 * d).plusNanos((int) (timeAsLong - NANOS_IN_SEC * d));
+    }
+
+    /**
+     * A helper function for nx, calculates the number of bytes which would be required to serialize the supplied string.
+     *
+     * @param string String to be serialized
+     * @return number of bytes required to serialise a string
+     * @throws UnsupportedEncodingException If the named charset is not supported
+     */
+    protected int lengthOfEncodedString(final String string) throws UnsupportedEncodingException {
+        if (string == null) {
+            return 0;
+        }
+
+        int nullTerminatorPosition;
+        if (-1 < (nullTerminatorPosition = string.indexOf(0x00))) {
+            return string.substring(0, nullTerminatorPosition).getBytes(stringEncoding).length;
+        } else {
+            return string.getBytes(stringEncoding).length;
+        }
+    }
+
+    private byte[] encodeString(final String string) throws UnsupportedEncodingException {
+        return string.getBytes(stringEncoding);
+    }
+
+    /**
+     * Calculates the number of bytes which would be required to serialize the supplied object.
+     *
+     * @param obj Object to be serialized
+     * @return number of bytes required to serialise an object.
+     * @throws UnsupportedEncodingException If the named charset is not supported
+     */
+    private int lengthOfObject(final Object obj) throws UnsupportedEncodingException {
+        DataType type = DataType.getKdbType(obj);
+        if (type == DataType.Dict) {
+            return 1 + lengthOfObject(((Dict) obj).x) + lengthOfObject(((Dict) obj).y);
+        }
+        if (type == DataType.Flip) {
+            return 3 + lengthOfObject(((Flip) obj).columnNames) + lengthOfObject(((Flip) obj).columns);
+        }
+        if (type.isAtom()) {
+            return type == DataType.String
+                    ? 2 + lengthOfEncodedString((String) obj)
+                    : 1 + type.getAtomicByteSize();
+        }
+
+        int numBytes = 6;
+        int numElements = elementCount(obj);
+        if (type == DataType.List || type == DataType.StringArray) {
+            for (int idx = 0; idx < numElements; ++idx)
+                numBytes +=
+                        type == DataType.List
+                                ? lengthOfObject(((Object[]) obj)[idx])
+                                : 1 + lengthOfEncodedString(((String[]) obj)[idx]);
+        } else {
+            numBytes += numElements * type.getAtomicByteSize();
+        }
+        return numBytes;
+    }
+
+    /**
+     * A helper function used by nx which returns the number of elements in the supplied object
+     * (for example: the number of keys in a Dict, the number of rows in a Flip,
+     * the length of the array if its an array type)
+     *
+     * @param obj Object to be serialized
+     * @return number of elements in an object.
+     * @throws UnsupportedEncodingException If the named charset is not supported
+     */
+    private int elementCount(final Object obj) throws UnsupportedEncodingException {
+        if (obj instanceof Dict) {
+            return elementCount(((Dict) obj).x);
+        }
+        if (obj instanceof Flip) {
+            return elementCount(((Flip) obj).columns[0]);
+        }
+        return obj instanceof char[]
+                ? new String((char[]) obj).getBytes(stringEncoding).length
+                : Array.getLength(obj);
     }
 }

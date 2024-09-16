@@ -781,28 +781,47 @@ public class KdbProtocol {
      * @return number of bytes required to serialise an object.
      * @throws UnsupportedEncodingException If the named charset is not supported
      */
-    private int lengthOfObject(final Object obj) throws UnsupportedEncodingException {
-        DataType type = DataType.getKdbType(obj);
+    protected int lengthOfObject(final Object obj) throws UnsupportedEncodingException {
+        final DataType type = DataType.getKdbType(obj);
         if (type == DataType.Dict) {
-            return 1 + lengthOfObject(((Dict) obj).x) + lengthOfObject(((Dict) obj).y);
+            return Byte.BYTES +
+                    lengthOfObject(((Dict) obj).x) +
+                    lengthOfObject(((Dict) obj).y);
         }
         if (type == DataType.Flip) {
-            return 3 + lengthOfObject(((Flip) obj).columnNames) + lengthOfObject(((Flip) obj).columns);
+            return Byte.BYTES + // flip type id byte
+                    Byte.BYTES + // null pad byte
+                    Byte.BYTES + // dict type id byte
+                    lengthOfObject(((Flip) obj).columnNames) +
+                    lengthOfObject(((Flip) obj).columns);
         }
         if (type.isAtom()) {
-            return type == DataType.String
-                    ? 2 + lengthOfEncodedString((String) obj)
-                    : 1 + type.getAtomicByteSize();
+            if (type == DataType.String) {
+                return Byte.BYTES +
+                        lengthOfEncodedString((String) obj) +
+                        Byte.BYTES; // Null terminator byte
+            } else {
+                return Byte.BYTES +
+                        type.getAtomicByteSize();
+            }
         }
 
-        int numBytes = 6;
+        int numBytes = Byte.BYTES + // array type id byte
+                Byte.BYTES + // null pad byte
+                Integer.BYTES; // numElements int
+
         int numElements = elementCount(obj);
         if (type == DataType.List || type == DataType.StringArray) {
-            for (int idx = 0; idx < numElements; ++idx)
-                numBytes +=
-                        type == DataType.List
-                                ? lengthOfObject(((Object[]) obj)[idx])
-                                : 1 + lengthOfEncodedString(((String[]) obj)[idx]);
+            for (int idx = 0; idx < numElements; ++idx) {
+                if (type == DataType.StringArray) {
+                    numBytes +=
+                            lengthOfEncodedString(((String[]) obj)[idx]) +
+                                    Byte.BYTES; // Null terminator byte
+                } else {
+                    numBytes +=
+                            lengthOfObject(((Object[]) obj)[idx]);
+                }
+            }
         } else {
             numBytes += numElements * type.getAtomicByteSize();
         }

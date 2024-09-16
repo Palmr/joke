@@ -50,10 +50,10 @@ public class KdbProtocol {
      */
     protected static final LocalTime NULL_LOCAL_TIME = LocalTime.ofNanoOfDay(1);
 
-    static final int DAYS_BETWEEN_1970_2000 = 10957;
-    static final long MILLS_IN_DAY = 86400000L;
-    static final long MILLS_BETWEEN_1970_2000 = MILLS_IN_DAY * DAYS_BETWEEN_1970_2000;
-    static final long NANOS_IN_SEC = 1000000000L;
+    protected static final int DAYS_BETWEEN_1970_2000 = 10957;
+    protected static final long MILLS_IN_DAY = 86400000L;
+    protected static final long MILLS_BETWEEN_1970_2000 = MILLS_IN_DAY * DAYS_BETWEEN_1970_2000;
+    protected static final long NANOS_IN_SEC = 1000000000L;
 
     /**
      * The character encoding to use when [de]-serializing strings.
@@ -80,7 +80,7 @@ public class KdbProtocol {
      * @return number of bytes required to serialise a string
      * @throws UnsupportedEncodingException If the named charset is not supported
      */
-    public int lengthOfEncodedString(final String string) throws UnsupportedEncodingException {
+    protected int lengthOfEncodedString(final String string) throws UnsupportedEncodingException {
         if (string == null) {
             return 0;
         }
@@ -187,7 +187,7 @@ public class KdbProtocol {
      * @return number of elements in an object.
      * @throws UnsupportedEncodingException If the named charset is not supported
      */
-    public int elementCount(final Object obj) throws UnsupportedEncodingException {
+    private int elementCount(final Object obj) throws UnsupportedEncodingException {
         if (obj instanceof Dict) {
             return elementCount(((Dict) obj).x);
         }
@@ -206,7 +206,7 @@ public class KdbProtocol {
      * @param messageBuffer buffer to serialise to
      * @throws UnsupportedEncodingException If the named charset (encoding) is not supported
      */
-    void serialise(final Object obj, final ByteBuffer messageBuffer) throws UnsupportedEncodingException, KdbException {
+    protected void serialise(final Object obj, final ByteBuffer messageBuffer) throws UnsupportedEncodingException, KdbException {
         final DataType type = DataType.getKdbType(obj);
         messageBuffer.put(type.getTypeCode());
         if (type.isAtom()) {
@@ -358,11 +358,11 @@ public class KdbProtocol {
     }
 
 
-    void serialise(boolean bool, final ByteBuffer messageBuffer) {
+    private void serialise(boolean bool, final ByteBuffer messageBuffer) {
         messageBuffer.put((byte) (bool ? 1 : 0));
     }
 
-    void serialise(UUID uuid, final ByteBuffer messageBuffer) {
+    private void serialise(UUID uuid, final ByteBuffer messageBuffer) {
         if (version < 3) {
             throw new RuntimeException("Guid not valid pre kdb+3.0");
         }
@@ -371,35 +371,35 @@ public class KdbProtocol {
         serialise(uuid.getLeastSignificantBits(), messageBuffer);
     }
 
-    void serialise(byte b, final ByteBuffer messageBuffer) {
+    private void serialise(byte b, final ByteBuffer messageBuffer) {
         messageBuffer.put(b);
     }
 
-    void serialise(short s, final ByteBuffer messageBuffer) {
+    private void serialise(short s, final ByteBuffer messageBuffer) {
         messageBuffer.putShort(s);
     }
 
-    void serialise(int i, final ByteBuffer messageBuffer) {
+    private void serialise(int i, final ByteBuffer messageBuffer) {
         messageBuffer.putInt(i);
     }
 
-    void serialise(long l, final ByteBuffer messageBuffer) {
+    private void serialise(long l, final ByteBuffer messageBuffer) {
         messageBuffer.putLong(l);
     }
 
-    void serialise(float f, final ByteBuffer messageBuffer) {
+    private void serialise(float f, final ByteBuffer messageBuffer) {
         messageBuffer.putInt(Float.floatToIntBits(f));
     }
 
-    void serialise(double d, final ByteBuffer messageBuffer) {
+    private void serialise(double d, final ByteBuffer messageBuffer) {
         messageBuffer.putLong(Double.doubleToLongBits(d));
     }
 
-    void serialise(char c, final ByteBuffer messageBuffer) {
+    private void serialise(char c, final ByteBuffer messageBuffer) {
         messageBuffer.put((byte) c);
     }
 
-    void serialise(String s, final ByteBuffer messageBuffer) throws UnsupportedEncodingException {
+    private void serialise(String s, final ByteBuffer messageBuffer) throws UnsupportedEncodingException {
         if (s != null) {
             byte[] encodedStringChars = s.getBytes(stringEncoding);
             for (int idx = 0; idx < encodedStringChars.length && encodedStringChars[idx] != NULL_BYTE; idx++) {
@@ -409,7 +409,7 @@ public class KdbProtocol {
         messageBuffer.put(NULL_BYTE);
     }
 
-    void serialise(Instant p, final ByteBuffer messageBuffer) {
+    private void serialise(Instant p, final ByteBuffer messageBuffer) {
         if (version < 1) {
             throw new RuntimeException("Instant not valid pre kdb+2.6");
         }
@@ -418,11 +418,11 @@ public class KdbProtocol {
                 : 1000000 * (p.toEpochMilli() - MILLS_BETWEEN_1970_2000) + p.getNano() % 1000000);
     }
 
-    void serialise(Month m, final ByteBuffer messageBuffer) {
+    private void serialise(Month m, final ByteBuffer messageBuffer) {
         messageBuffer.putInt(m.i);
     }
 
-    void serialise(LocalDate d, final ByteBuffer messageBuffer) {
+    private void serialise(LocalDate d, final ByteBuffer messageBuffer) {
         if (d == LocalDate.MIN) {
             messageBuffer.putInt(NULL_INT);
             return;
@@ -434,29 +434,29 @@ public class KdbProtocol {
         messageBuffer.putInt((int) (daysSince2000));
     }
 
-    void serialise(LocalDateTime z, final ByteBuffer messageBuffer) {
+    private void serialise(LocalDateTime z, final ByteBuffer messageBuffer) {
         serialise(z == LocalDateTime.MIN
                         ? NULL_FLOAT
                         : (z.toInstant(UTC).toEpochMilli() - MILLS_BETWEEN_1970_2000) / 8.64e7,
                 messageBuffer);
     }
 
-    void serialise(Timespan n, final ByteBuffer messageBuffer) {
+    private void serialise(Timespan n, final ByteBuffer messageBuffer) {
         if (version < 1) {
             throw new RuntimeException("Timespan not valid pre kdb+2.6");
         }
         messageBuffer.putLong(n.j);
     }
 
-    void serialise(Minute u, final ByteBuffer messageBuffer) {
+    private void serialise(Minute u, final ByteBuffer messageBuffer) {
         messageBuffer.putInt(u.i);
     }
 
-    void serialise(Second v, final ByteBuffer messageBuffer) {
+    private void serialise(Second v, final ByteBuffer messageBuffer) {
         messageBuffer.putInt(v.i);
     }
 
-    void serialise(LocalTime t, final ByteBuffer messageBuffer) {
+    private void serialise(LocalTime t, final ByteBuffer messageBuffer) {
         messageBuffer.putInt((t == NULL_LOCAL_TIME)
                 ? NULL_INT
                 : (int) ((t.toSecondOfDay() * 1000 + t.getNano() / 1000000) % MILLS_IN_DAY));
@@ -479,7 +479,7 @@ public class KdbProtocol {
      * @param messageBuffer incoming message buffer
      * @return Deserialized string using registered encoding
      */
-    String deserializeString(final ByteBuffer messageBuffer) throws UnsupportedEncodingException {
+    private String deserializeString(final ByteBuffer messageBuffer) throws UnsupportedEncodingException {
         final var startPos = messageBuffer.position();
         while (messageBuffer.get() != NULL_BYTE) {
             Thread.onSpinWait();
@@ -497,9 +497,9 @@ public class KdbProtocol {
      * Deserializes the contents of the incoming message buffer
      *
      * @param messageBuffer incoming message buffer
-     * @return deserialised object
+     *                      private @return deserialised object
      */
-    Object deserialiseResponseMessage(final ByteBuffer messageBuffer) throws UnsupportedEncodingException, KdbException {
+    protected Object deserialiseResponseMessage(final ByteBuffer messageBuffer) throws UnsupportedEncodingException, KdbException {
         int i = 0;
         int n;
         DataType type = DataType.getKdbType(messageBuffer.get());
@@ -678,7 +678,7 @@ public class KdbProtocol {
      *
      * @return Deserialized char
      */
-    char deserialiseChar(final ByteBuffer messageBuffer) {
+    private char deserialiseChar(final ByteBuffer messageBuffer) {
         return (char) (messageBuffer.get() & 0xff);
     }
 
@@ -687,7 +687,7 @@ public class KdbProtocol {
      *
      * @return Deserialized boolean
      */
-    boolean deserialiseBoolean(final ByteBuffer messageBuffer) {
+    private boolean deserialiseBoolean(final ByteBuffer messageBuffer) {
         return 1 == messageBuffer.get();
     }
 
@@ -696,7 +696,7 @@ public class KdbProtocol {
      *
      * @return Deserialized short
      */
-    short deserialiseShort(final ByteBuffer messageBuffer) {
+    private short deserialiseShort(final ByteBuffer messageBuffer) {
         return messageBuffer.getShort();
     }
 
@@ -705,7 +705,7 @@ public class KdbProtocol {
      *
      * @return Deserialized UUID
      */
-    UUID deserialiseUuid(final ByteBuffer messageBuffer) {
+    private UUID deserialiseUuid(final ByteBuffer messageBuffer) {
         final ByteOrder originalOrder = messageBuffer.order();
 
         messageBuffer.order(ByteOrder.BIG_ENDIAN);
@@ -720,7 +720,7 @@ public class KdbProtocol {
      *
      * @return Deserialized long
      */
-    long deserialiseLong(final ByteBuffer messageBuffer) {
+    private long deserialiseLong(final ByteBuffer messageBuffer) {
         return messageBuffer.getLong();
     }
 
@@ -729,7 +729,7 @@ public class KdbProtocol {
      *
      * @return Deserialized float
      */
-    float deserialiseFloat(final ByteBuffer messageBuffer) {
+    private float deserialiseFloat(final ByteBuffer messageBuffer) {
         return Float.intBitsToFloat(messageBuffer.getInt());
     }
 
@@ -738,7 +738,7 @@ public class KdbProtocol {
      *
      * @return Deserialized double
      */
-    double deserialiseDouble(final ByteBuffer messageBuffer) {
+    private double deserialiseDouble(final ByteBuffer messageBuffer) {
         return Double.longBitsToDouble(messageBuffer.getLong());
     }
 
@@ -747,7 +747,7 @@ public class KdbProtocol {
      *
      * @return Deserialized Month
      */
-    Month deserialiseMonth(final ByteBuffer messageBuffer) {
+    private Month deserialiseMonth(final ByteBuffer messageBuffer) {
         return new Month(messageBuffer.getInt());
     }
 
@@ -756,7 +756,7 @@ public class KdbProtocol {
      *
      * @return Deserialized Minute
      */
-    Minute deserialiseMinute(final ByteBuffer messageBuffer) {
+    private Minute deserialiseMinute(final ByteBuffer messageBuffer) {
         return new Minute(messageBuffer.getInt());
     }
 
@@ -765,7 +765,7 @@ public class KdbProtocol {
      *
      * @return Deserialized Second
      */
-    Second deserialiseSecond(final ByteBuffer messageBuffer) {
+    private Second deserialiseSecond(final ByteBuffer messageBuffer) {
         return new Second(messageBuffer.getInt());
     }
 
@@ -774,7 +774,7 @@ public class KdbProtocol {
      *
      * @return Deserialized Timespan
      */
-    Timespan deserialiseTimespan(final ByteBuffer messageBuffer) {
+    private Timespan deserialiseTimespan(final ByteBuffer messageBuffer) {
         return new Timespan(messageBuffer.getLong());
     }
 
@@ -783,7 +783,7 @@ public class KdbProtocol {
      *
      * @return Deserialized date
      */
-    LocalDate deserialiseLocalDate(final ByteBuffer messageBuffer) {
+    private LocalDate deserialiseLocalDate(final ByteBuffer messageBuffer) {
         final int dateAsInt = messageBuffer.getInt();
         return (dateAsInt == NULL_INT
                 ? LocalDate.MIN
@@ -795,7 +795,7 @@ public class KdbProtocol {
      *
      * @return Deserialized time
      */
-    LocalTime deserialiseLocalTime(final ByteBuffer messageBuffer) {
+    private LocalTime deserialiseLocalTime(final ByteBuffer messageBuffer) {
         final int timeAsInt = messageBuffer.getInt();
         return (timeAsInt == NULL_INT
                 ? NULL_LOCAL_TIME
@@ -807,7 +807,7 @@ public class KdbProtocol {
      *
      * @return Deserialized date
      */
-    LocalDateTime deserialiseLocalDateTime(final ByteBuffer messageBuffer) {
+    private LocalDateTime deserialiseLocalDateTime(final ByteBuffer messageBuffer) {
         final double f = deserialiseDouble(messageBuffer);
         if (Double.isNaN(f)) {
             return LocalDateTime.MIN;
@@ -820,7 +820,7 @@ public class KdbProtocol {
      *
      * @return Deserialized timestamp
      */
-    Instant deserialiseInstant(final ByteBuffer messageBuffer) {
+    private Instant deserialiseInstant(final ByteBuffer messageBuffer) {
         final long timeAsLong = messageBuffer.getLong();
         if (timeAsLong == NULL_LONG) {
             return Instant.MIN;

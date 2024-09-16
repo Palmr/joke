@@ -69,59 +69,63 @@ import java.util.UUID;
  * </pre>
  */
 public enum DataType {
-    List(0, false),
-    Boolean(-1, true),
-    UUID(-2, true),
-    Byte(-4, true),
-    Short(-5, true),
-    Integer(-6, true),
-    Long(-7, true),
-    Float(-8, true),
-    Double(-9, true),
-    Character(-10, true),
-    String(-11, true),
-    LocalDate(-14, true),
-    LocalTime(-19, true),
-    Instant(-12, true),
-    LocalDateTime(-15, true),
-    Timespan(-16, true),
-    Month(-13, true),
-    Minute(-17, true),
-    Second(-18, true),
-    Exception(-128, true),
-    BooleanArray(1, false),
-    UUIDArray(2, false),
-    ByteArray(4, false),
-    ShortArray(5, false),
-    IntArray(6, false),
-    LongArray(7, false),
-    FloatArray(8, false),
-    DoubleArray(9, false),
-    CharArray(10, false),
-    StringArray(11, false),
-    LocalDateArray(14, false),
-    LocalTimeArray(19, false),
-    InstantArray(12, false),
-    LocalDateTimeArray(15, false),
-    TimespanArray(16, false),
-    MonthArray(13, false),
-    MinuteArray(17, false),
-    SecondArray(18, false),
-    Flip(98, false),
-    Dict(99, false),
-    Lambda(100, false),
-    UnaryPrimitive(101, false),
-    Operator(102, false),
-    Iterator(103, false),
-    Projection(104, false),
-    Composition(105, false),
-    Each(106, false),
-    Over(107, false),
-    Scan(108, false),
-    ParallelEach(109, false),
-    EachRight(110, false),
-    EachLeft(111, false),
-    dynamicLoad(112, false);
+    /**
+     * "number of bytes from type." A helper for `lengthOfObject`, to assist in calculating the number of bytes required
+     * to serialize a particular type.
+     */
+    List(0, false, 0),
+    Boolean(-1, true, 1),
+    UUID(-2, true, 16),
+    Byte(-4, true, 1),
+    Short(-5, true, 2),
+    Integer(-6, true, 4),
+    Long(-7, true, 8),
+    Float(-8, true, 4),
+    Double(-9, true, 8),
+    Character(-10, true, 1),
+    String(-11, true, 0),
+    Instant(-12, true, 8),
+    Month(-13, true, 4),
+    LocalDate(-14, true, 4),
+    LocalDateTime(-15, true, 8),
+    Timespan(-16, true, 8),
+    Minute(-17, true, 4),
+    Second(-18, true, 4),
+    LocalTime(-19, true, 4),
+    Exception(-128, true, 0),
+    BooleanArray(1, false, 1),
+    UUIDArray(2, false, 16),
+    ByteArray(4, false, 1),
+    ShortArray(5, false, 2),
+    IntArray(6, false, 4),
+    LongArray(7, false, 8),
+    FloatArray(8, false, 4),
+    DoubleArray(9, false, 8),
+    CharArray(10, false, 1),
+    StringArray(11, false, 0),
+    InstantArray(12, false, 8),
+    MonthArray(13, false, 4),
+    LocalDateArray(14, false, 4),
+    LocalDateTimeArray(15, false, 8),
+    TimespanArray(16, false, 8),
+    MinuteArray(17, false, 4),
+    SecondArray(18, false, 4),
+    LocalTimeArray(19, false, 4),
+    Flip(98, false, 0),
+    Dict(99, false, 0),
+    Lambda(100, false, 0),
+    UnaryPrimitive(101, false, 0),
+    Operator(102, false, 0),
+    Iterator(103, false, 0),
+    Projection(104, false, 0),
+    Composition(105, false, 0),
+    Each(106, false, 0),
+    Over(107, false, 0),
+    Scan(108, false, 0),
+    ParallelEach(109, false, 0),
+    EachRight(110, false, 0),
+    EachLeft(111, false, 0),
+    dynamicLoad(112, false, 0);
 
     private static final Map<Byte, DataType> typeCodeLookup = new HashMap<>();
 
@@ -133,10 +137,12 @@ public enum DataType {
 
     private final byte typeCode;
     private final boolean isAtom;
+    private final int atomicByteSize;
 
-    DataType(final int typeCode, final boolean isAtom) {
+    DataType(final int typeCode, final boolean isAtom, final int atomicByteSize) {
         this.typeCode = (byte) typeCode;
         this.isAtom = isAtom;
+        this.atomicByteSize = atomicByteSize;
     }
 
     /**
@@ -237,5 +243,9 @@ public enum DataType {
 
     public boolean isAtom() {
         return isAtom;
+    }
+
+    public int getAtomicByteSize() {
+        return atomicByteSize;
     }
 }

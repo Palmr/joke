@@ -55,13 +55,6 @@ public class KdbProtocol {
     static final long MILLS_BETWEEN_1970_2000 = MILLS_IN_DAY * DAYS_BETWEEN_1970_2000;
     static final long NANOS_IN_SEC = 1000000000L;
 
-
-    /**
-     * "number of bytes from type." A helper for `lengthOfObject`, to assist in calculating the number of bytes required
-     * to serialize a particular type.
-     */
-    private static final int[] BYTES_FROM_TYPE = {0, 1, 16, 0, 1, 2, 4, 8, 4, 8, 1, 0, 8, 4, 4, 8, 8, 4, 4, 4};
-
     /**
      * The character encoding to use when [de]-serializing strings.
      */
@@ -168,7 +161,7 @@ public class KdbProtocol {
         if (type.isAtom()) {
             return type == DataType.String
                     ? 2 + lengthOfEncodedString((String) obj)
-                    : 1 + BYTES_FROM_TYPE[type.getTypeCode()];
+                    : 1 + type.getAtomicByteSize();
         }
 
         int numBytes = 6;
@@ -180,7 +173,7 @@ public class KdbProtocol {
                                 ? lengthOfObject(((Object[]) obj)[idx])
                                 : 1 + lengthOfEncodedString(((String[]) obj)[idx]);
         } else {
-            numBytes += numElements * BYTES_FROM_TYPE[type.getTypeCode()];
+            numBytes += numElements * type.getAtomicByteSize();
         }
         return numBytes;
     }

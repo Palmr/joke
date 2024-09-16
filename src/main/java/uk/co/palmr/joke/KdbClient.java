@@ -27,10 +27,11 @@ import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.co.palmr.joke.IpcVersion.KDB_IPC_VERSION;
+
 
 public class KdbClient implements AutoCloseable {
     private static final String DEFAULT_STRING_ENCODING = "ISO-8859-1";
-    private static final int KDB_IPC_VERSION = 3;
     public static final int DEFAULT_BUFFER_SIZE = 4096;
 
     private final SocketChannel socketChannel;

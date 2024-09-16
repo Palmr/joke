@@ -62,7 +62,7 @@ public class KdbProtocol {
 
     private final boolean allowCompression;
 
-    private int version = 3;
+    private int version = IpcVersion.KDB_IPC_VERSION;
 
     public KdbProtocol(final String stringEncoding, final boolean allowCompression) {
         this.stringEncoding = stringEncoding;

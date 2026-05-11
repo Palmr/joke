@@ -2,6 +2,7 @@ plugins {
     id("java-library")
     id("maven-publish")
     id("com.diffplug.spotless") version "7.0.4"
+    id("me.champeau.jmh") version "0.7.2"
 }
 
 group = "uk.co.palmr"

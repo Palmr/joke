@@ -352,7 +352,7 @@ public class KdbProtocol {
   }
 
   private void serialize(Month m, final ByteBuffer messageBuffer) {
-    messageBuffer.putInt(m.value());
+    messageBuffer.putInt(m.monthsSinceJan2000());
   }
 
   private void serialize(LocalDate d, final ByteBuffer messageBuffer) {
@@ -384,15 +384,15 @@ public class KdbProtocol {
     if (version < 1) {
       throw new RuntimeException("Timespan not valid pre kdb+2.6");
     }
-    messageBuffer.putLong(n.value());
+    messageBuffer.putLong(n.nanosSinceMidnight());
   }
 
   private void serialize(Minute u, final ByteBuffer messageBuffer) {
-    messageBuffer.putInt(u.value());
+    messageBuffer.putInt(u.minsSinceMidnight());
   }
 
   private void serialize(Second v, final ByteBuffer messageBuffer) {
-    messageBuffer.putInt(v.value());
+    messageBuffer.putInt(v.secondsSinceMidnight());
   }
 
   private void serialize(LocalTime t, final ByteBuffer messageBuffer) {

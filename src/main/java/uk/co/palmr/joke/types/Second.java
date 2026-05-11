@@ -20,14 +20,16 @@ import static uk.co.palmr.joke.NumberFormatter.i2;
  * {@code Second} represents kdb+ second type, which is a point in time represented in seconds since
  * midnight.
  */
-public record Second(int value) implements Comparable<Second> {
+public record Second(int secondsSinceMidnight) implements Comparable<Second> {
   @Override
   public String toString() {
-    return value == NULL_INT ? "" : new Minute(value / 60).toString() + ':' + i2(value % 60);
+    return secondsSinceMidnight == NULL_INT
+        ? ""
+        : new Minute(secondsSinceMidnight / 60).toString() + ':' + i2(secondsSinceMidnight % 60);
   }
 
   @Override
   public int compareTo(Second s) {
-    return Integer.compare(value, s.value);
+    return Integer.compare(secondsSinceMidnight, s.secondsSinceMidnight);
   }
 }

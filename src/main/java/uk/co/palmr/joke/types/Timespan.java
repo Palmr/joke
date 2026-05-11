@@ -24,7 +24,7 @@ import java.util.TimeZone;
  * {@code Timespan} represents kdb+ timestamp type, which is a point in time represented in
  * nanoseconds since midnight.
  */
-public record Timespan(long value) implements Comparable<Timespan> {
+public record Timespan(long nanosSinceMidnight) implements Comparable<Timespan> {
   /** Constructs {@code Timespan} using current time since midnight and default timezone. */
   public Timespan() {
     this(TimeZone.getDefault());
@@ -51,9 +51,9 @@ public record Timespan(long value) implements Comparable<Timespan> {
 
   @Override
   public String toString() {
-    if (value == NULL_LONG) return "";
-    String s = value < 0 ? "-" : "";
-    long jj = value < 0 ? -value : value;
+    if (nanosSinceMidnight == NULL_LONG) return "";
+    String s = nanosSinceMidnight < 0 ? "-" : "";
+    long jj = nanosSinceMidnight < 0 ? -nanosSinceMidnight : nanosSinceMidnight;
     int d = ((int) (jj / 86400000000000L));
     if (d != 0) s += d + "D";
     return s
@@ -68,6 +68,6 @@ public record Timespan(long value) implements Comparable<Timespan> {
 
   @Override
   public int compareTo(Timespan t) {
-    return Long.compare(value, t.value);
+    return Long.compare(nanosSinceMidnight, t.nanosSinceMidnight);
   }
 }

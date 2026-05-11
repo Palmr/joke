@@ -20,14 +20,16 @@ import static uk.co.palmr.joke.NumberFormatter.i2;
  * {@code Minute} represents kdb+ minute type, which is a time represented as the number of minutes
  * from midnight.
  */
-public record Minute(int value) implements Comparable<Minute> {
+public record Minute(int minsSinceMidnight) implements Comparable<Minute> {
   @Override
   public String toString() {
-    return value == NULL_INT ? "" : i2(value / 60) + ":" + i2(value % 60);
+    return minsSinceMidnight == NULL_INT
+        ? ""
+        : i2(minsSinceMidnight / 60) + ":" + i2(minsSinceMidnight % 60);
   }
 
   @Override
   public int compareTo(Minute m) {
-    return Integer.compare(value, m.value);
+    return Integer.compare(minsSinceMidnight, m.minsSinceMidnight);
   }
 }

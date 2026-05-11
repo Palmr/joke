@@ -23,7 +23,7 @@ class DictTest {
     String[] x = new String[] {"Key"};
     String[][] y = new String[][] {{"Value1", "Value2", "Value3"}};
     Dict dict = new Dict(x, y);
-    assertEquals(x, dict.x);
-    assertEquals(y, dict.y);
+    assertEquals(x, dict.keys());
+    assertEquals(y, dict.values());
   }
 }

@@ -363,8 +363,8 @@ public class SerDesTest {
       buffer.position(0);
 
       final Dict actual = (Dict) kdbProtocol.deserializeResponseMessage(buffer);
-      assertArrayEquals((String[]) input.x, (String[]) actual.x);
-      assertArrayEquals((String[]) input.y, (String[]) actual.y);
+      assertArrayEquals((String[]) input.keys(), (String[]) actual.keys());
+      assertArrayEquals((String[]) input.values(), (String[]) actual.values());
     } catch (UnsupportedEncodingException | KdbException e) {
       fail(e);
     }

@@ -17,39 +17,16 @@ import static uk.co.palmr.joke.KdbProtocol.NULL_INT;
 import static uk.co.palmr.joke.NumberFormatter.i2;
 
 /** {@code Month} represents kdb+ month type, which is the number of months since Jan 2000. */
-public class Month implements Comparable<Month> {
-  /** Number of months since Jan 2000 */
-  public int i;
-
-  /**
-   * Create a KDB+ representation of 'month' type from the q language (a month value is the count of
-   * months since the beginning of the millennium. Post-milieu is positive and pre is negative)
-   *
-   * @param x Number of months from millennium
-   */
-  public Month(int x) {
-    i = x;
-  }
-
+public record Month(int value) implements Comparable<Month> {
   @Override
   public String toString() {
-    int m = i + 24000;
+    int m = value + 24000;
     int y = m / 12;
-    return i == NULL_INT ? "" : i2(y / 100) + i2(y % 100) + "-" + i2(1 + m % 12);
-  }
-
-  @Override
-  public boolean equals(final Object o) {
-    return ((o instanceof Month) && (((Month) o).i == i));
-  }
-
-  @Override
-  public int hashCode() {
-    return i;
+    return value == NULL_INT ? "" : i2(y / 100) + i2(y % 100) + "-" + i2(1 + m % 12);
   }
 
   @Override
   public int compareTo(Month m) {
-    return Integer.compare(i, m.i);
+    return Integer.compare(value, m.value);
   }
 }

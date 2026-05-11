@@ -203,8 +203,8 @@ public class KdbProtocol {
 
     if (type == DataType.Dict) {
       final Dict r = (Dict) obj;
-      serialize(r.x, messageBuffer);
-      serialize(r.y, messageBuffer);
+      serialize(r.keys(), messageBuffer);
+      serialize(r.values(), messageBuffer);
       return;
     }
 
@@ -354,7 +354,7 @@ public class KdbProtocol {
   }
 
   private void serialize(Month m, final ByteBuffer messageBuffer) {
-    messageBuffer.putInt(m.i);
+    messageBuffer.putInt(m.value());
   }
 
   private void serialize(LocalDate d, final ByteBuffer messageBuffer) {
@@ -386,15 +386,15 @@ public class KdbProtocol {
     if (version < 1) {
       throw new RuntimeException("Timespan not valid pre kdb+2.6");
     }
-    messageBuffer.putLong(n.j);
+    messageBuffer.putLong(n.value());
   }
 
   private void serialize(Minute u, final ByteBuffer messageBuffer) {
-    messageBuffer.putInt(u.i);
+    messageBuffer.putInt(u.value());
   }
 
   private void serialize(Second v, final ByteBuffer messageBuffer) {
-    messageBuffer.putInt(v.i);
+    messageBuffer.putInt(v.value());
   }
 
   private void serialize(LocalTime t, final ByteBuffer messageBuffer) {
@@ -781,7 +781,9 @@ public class KdbProtocol {
   protected int lengthOfObject(final Object obj) throws UnsupportedEncodingException {
     final DataType type = DataType.getKdbType(obj);
     if (type == DataType.Dict) {
-      return Byte.BYTES + lengthOfObject(((Dict) obj).x) + lengthOfObject(((Dict) obj).y);
+      return Byte.BYTES
+          + lengthOfObject(((Dict) obj).keys())
+          + lengthOfObject(((Dict) obj).values());
     }
     if (type == DataType.Flip) {
       return Byte.BYTES
@@ -837,7 +839,7 @@ public class KdbProtocol {
    */
   private int elementCount(final Object obj) throws UnsupportedEncodingException {
     if (obj instanceof Dict) {
-      return elementCount(((Dict) obj).x);
+      return elementCount(((Dict) obj).keys());
     }
     if (obj instanceof Flip) {
       return elementCount(((Flip) obj).columns[0]);

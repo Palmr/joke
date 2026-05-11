@@ -35,8 +35,8 @@ public class Flip {
    *     (keys), with an array of arrays for the column values
    */
   public Flip(Dict dict) {
-    columnNames = (String[]) dict.x;
-    columns = (Object[]) dict.y;
+    columnNames = (String[]) dict.keys();
+    columns = (Object[]) dict.values();
   }
 
   /**

@@ -43,6 +43,6 @@ class FlipTest {
     String[][] y = new String[][] {{"Value1", "Value2", "Value3"}};
     Dict dict = new Dict(x, y);
     Flip flip = new Flip(dict);
-    assertThrows(ArrayIndexOutOfBoundsException.class, () -> flip.at("RUBBISH"));
+    assertThrows(IllegalArgumentException.class, () -> flip.at("RUBBISH"));
   }
 }

@@ -69,9 +69,10 @@ public class Flip {
    * @return The index at which the String resides
    */
   private static int find(String[] x, String y) {
-    int i = 0;
-    while (i < x.length && !x[i].equals(y)) ++i;
-    return i;
+    for (int i = 0; i < x.length; i++) {
+      if (x[i].equals(y)) return i;
+    }
+    throw new IllegalArgumentException("Column not found: " + y);
   }
 
   @Override

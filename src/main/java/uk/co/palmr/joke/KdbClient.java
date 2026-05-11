@@ -57,16 +57,15 @@ public class KdbClient implements AutoCloseable {
   }
 
   /**
-   * Initializes a new {@link KdbClient} instance and connects to KDB+ over TCP with optional TLS
-   * support for encryption.
+   * Initializes a new {@link KdbClient} instance and connects to KDB+ over TCP.
    *
    * @param hostname Host of remote q process
    * @param port Port of remote q process
    * @param username Username for remote authorization
    * @param password Password for remote authorization
    * @param allowCompression consider compression on outgoing messages (given uncompressed
-   *     serialized data also has a length greater than 2000 bytes and connection is not localhost)
-   * @param stringEncoding character encoding to use when [de]-serializing strings
+   *     serialised data also has a length greater than 2000 bytes and connection is not localhost)
+   * @param stringEncoding character encoding to use when [de]-serialising strings
    * @param bufferSize size of the data buffer
    * @throws KdbException if access denied
    * @throws IOException if an I/O error occurs.

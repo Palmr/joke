@@ -385,15 +385,16 @@ public class KdbProtocol {
    * @return Deserialized string using registered encoding
    */
   private String deserializeString(final ByteBuffer messageBuffer) {
+    final var array = messageBuffer.array();
+    final var offset = messageBuffer.arrayOffset();
     final var startPos = messageBuffer.position();
-    while (messageBuffer.get() != NULL_BYTE) {
-      // advance position to null terminator
+    var pos = startPos;
+    while (array[offset + pos] != NULL_BYTE) {
+      pos++;
     }
-    final var length = messageBuffer.position() - startPos - 1;
-    return length == 0
-        ? ""
-        : new String(
-            messageBuffer.array(), messageBuffer.arrayOffset() + startPos, length, stringEncoding);
+    messageBuffer.position(pos + 1);
+    final var length = pos - startPos;
+    return length == 0 ? "" : new String(array, offset + startPos, length, stringEncoding);
   }
 
   /**

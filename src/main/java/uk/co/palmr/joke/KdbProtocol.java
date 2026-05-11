@@ -222,10 +222,24 @@ public class KdbProtocol {
     serialize(numElements, messageBuffer);
 
     if (type == DataType.CharArray) {
-      byte[] b = new String((char[]) obj).getBytes(stringEncoding);
-      for (final byte character : b) {
-        serialize(character, messageBuffer);
-      }
+      messageBuffer.put(new String((char[]) obj).getBytes(stringEncoding));
+    } else if (type == DataType.ByteArray) {
+      messageBuffer.put((byte[]) obj);
+    } else if (type == DataType.ShortArray) {
+      messageBuffer.asShortBuffer().put((short[]) obj);
+      messageBuffer.position(messageBuffer.position() + numElements * Short.BYTES);
+    } else if (type == DataType.IntArray) {
+      messageBuffer.asIntBuffer().put((int[]) obj);
+      messageBuffer.position(messageBuffer.position() + numElements * Integer.BYTES);
+    } else if (type == DataType.LongArray) {
+      messageBuffer.asLongBuffer().put((long[]) obj);
+      messageBuffer.position(messageBuffer.position() + numElements * Long.BYTES);
+    } else if (type == DataType.FloatArray) {
+      messageBuffer.asFloatBuffer().put((float[]) obj);
+      messageBuffer.position(messageBuffer.position() + numElements * Float.BYTES);
+    } else if (type == DataType.DoubleArray) {
+      messageBuffer.asDoubleBuffer().put((double[]) obj);
+      messageBuffer.position(messageBuffer.position() + numElements * Double.BYTES);
     } else {
       for (int idx = 0; idx < numElements; idx++) {
         switch (type) {
@@ -237,24 +251,6 @@ public class KdbProtocol {
             break;
           case UUIDArray:
             serialize(((UUID[]) obj)[idx], messageBuffer);
-            break;
-          case ByteArray:
-            serialize(((byte[]) obj)[idx], messageBuffer);
-            break;
-          case ShortArray:
-            serialize(((short[]) obj)[idx], messageBuffer);
-            break;
-          case IntArray:
-            serialize(((int[]) obj)[idx], messageBuffer);
-            break;
-          case LongArray:
-            serialize(((long[]) obj)[idx], messageBuffer);
-            break;
-          case FloatArray:
-            serialize(((float[]) obj)[idx], messageBuffer);
-            break;
-          case DoubleArray:
-            serialize(((double[]) obj)[idx], messageBuffer);
             break;
           case StringArray:
             serialize(((String[]) obj)[idx], messageBuffer);

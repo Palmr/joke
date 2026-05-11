@@ -36,11 +36,11 @@ The official driver allocates a fresh `byte[]` on every call.
 |------------|-------------:|-----------------:|---------:|------------------:|----------------------:|
 | `long[]`   | 5.3          | 25.2             | **4.8x** | 80,016            | 80,016                |
 | `double[]` | 5.3          | 25.1             | **4.7x** | 80,072            | 80,016                |
-| `String[]` | 103.5        | 94.6             | **0.9x** | 520,016           | 520,016               |
+| `String[]` | 97.0         | 92.3             | **1.0x** | 520,016           | 520,016               |
 
 Primitive array deserialization uses bulk `ByteBuffer` reads, giving a ~5x speedup with identical
-allocation (the output array itself is unavoidable). Symbol (`String[]`) deserialization now matches
-the official driver on allocation; the small remaining time gap (~10%) is the only outstanding delta.
+allocation (the output array itself is unavoidable). Symbol (`String[]`) deserialization is at parity
+with the official driver on both time and allocation.
 
 ## Local Development Setup
 

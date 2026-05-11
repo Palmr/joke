@@ -471,15 +471,15 @@ public class KdbProtocol {
         case Exception:
           throw new KdbException(deserializeString(messageBuffer));
       }
-    if (type.getTypeCode() > 99) {
+    if (type.getTypeCode() > DataType.Dict.getTypeCode()) {
       if (type == Lambda) {
         deserializeString(messageBuffer);
         return deserializeResponseMessage(messageBuffer);
       }
-      if (type.getTypeCode() < 104) {
-        return messageBuffer.get() == 0 && type.getTypeCode() == 101 ? null : "func";
+      if (type.getTypeCode() < DataType.Projection.getTypeCode()) {
+        return messageBuffer.get() == 0 && type == DataType.UnaryPrimitive ? null : "func";
       }
-      if (type.getTypeCode() > 105) {
+      if (type.getTypeCode() > DataType.Composition.getTypeCode()) {
         deserializeResponseMessage(messageBuffer);
       } else {
         for (n = messageBuffer.getInt(); i < n; i++) {

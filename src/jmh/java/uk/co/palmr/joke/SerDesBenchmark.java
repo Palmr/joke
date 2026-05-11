@@ -25,6 +25,7 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.infra.Blackhole;
 import uk.co.palmr.joke.messages.KdbMessageHeader;
 
 @State(Scope.Thread)
@@ -35,9 +36,10 @@ import uk.co.palmr.joke.messages.KdbMessageHeader;
 @Fork(1)
 public class SerDesBenchmark extends KdbProtocol {
 
-  private static final int ARRAY_SIZE = 1_000;
+  private static final int ARRAY_SIZE = 10_000;
+  private static final int BUFFER_SIZE = 512 * 1024;
 
-  private final ByteBuffer serializeBuffer = ByteBuffer.allocate(64 * 1024);
+  private final ByteBuffer serializeBuffer = ByteBuffer.allocate(BUFFER_SIZE);
 
   private final long[] longArray = new long[ARRAY_SIZE];
   private final double[] doubleArray = new double[ARRAY_SIZE];
@@ -65,7 +67,7 @@ public class SerDesBenchmark extends KdbProtocol {
   }
 
   private ByteBuffer preserialized(Object obj) throws KdbException {
-    var buf = ByteBuffer.allocate(64 * 1024);
+    var buf = ByteBuffer.allocate(BUFFER_SIZE);
     buf.position(KdbMessageHeader.SIZE);
     serialize(obj, buf);
     return buf;
@@ -74,24 +76,27 @@ public class SerDesBenchmark extends KdbProtocol {
   // --- serialize ---
 
   @Benchmark
-  public void serializeLongArray() throws KdbException {
+  public void serializeLongArray(Blackhole bh) throws KdbException {
     serializeBuffer.clear();
     serializeBuffer.position(KdbMessageHeader.SIZE);
     serialize(longArray, serializeBuffer);
+    bh.consume(serializeBuffer);
   }
 
   @Benchmark
-  public void serializeDoubleArray() throws KdbException {
+  public void serializeDoubleArray(Blackhole bh) throws KdbException {
     serializeBuffer.clear();
     serializeBuffer.position(KdbMessageHeader.SIZE);
     serialize(doubleArray, serializeBuffer);
+    bh.consume(serializeBuffer);
   }
 
   @Benchmark
-  public void serializeSymbolArray() throws KdbException {
+  public void serializeSymbolArray(Blackhole bh) throws KdbException {
     serializeBuffer.clear();
     serializeBuffer.position(KdbMessageHeader.SIZE);
     serialize(symbolArray, serializeBuffer);
+    bh.consume(serializeBuffer);
   }
 
   // --- deserialize ---

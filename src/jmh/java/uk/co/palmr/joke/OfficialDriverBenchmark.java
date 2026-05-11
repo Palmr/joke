@@ -34,7 +34,7 @@ import org.openjdk.jmh.annotations.Warmup;
 @Fork(1)
 public class OfficialDriverBenchmark {
 
-  private static final int ARRAY_SIZE = 1_000;
+  private static final int ARRAY_SIZE = 10_000;
 
   private c conn;
 

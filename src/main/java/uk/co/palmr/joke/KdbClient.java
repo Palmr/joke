@@ -24,8 +24,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import uk.co.palmr.joke.messages.AuthenticateResponse;
 import uk.co.palmr.joke.messages.KdbMessageHeader;
 import uk.co.palmr.joke.types.MessageType;
@@ -195,7 +195,7 @@ public class KdbClient implements AutoCloseable {
   }
 
   private static class KdbClientThreadAssertion {
-    static final Map<KdbClient, Thread> CLIENTS = new HashMap<>();
+    static final Map<KdbClient, Thread> CLIENTS = new WeakHashMap<>();
 
     protected static boolean isSameThread(final KdbClient kdbClient) {
       synchronized (CLIENTS) {

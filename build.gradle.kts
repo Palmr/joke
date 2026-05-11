@@ -74,6 +74,10 @@ publishing {
     }
 }
 
+jmh {
+    profilers.add("gc")
+}
+
 spotless {
     java {
         targetExclude("src/jmh/java/com/kx/c.java")

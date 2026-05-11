@@ -14,6 +14,34 @@ Originally https://github.com/KxSystems/javakdb but with more Java standards, fe
  - Joke has somewhat readable code
  - Joke is not ready for production use, it's just a more Java-esque starting point for some ideas I had
 
+## Benchmarks
+
+Measured on 10,000-element arrays using JMH (5 iterations, `AverageTime` mode) with the GC profiler.
+Compared against the [official KxSystems Java driver](https://github.com/KxSystems/javakdb).
+
+### Serialize
+
+| Operation | Joke (µs/op) | Official (µs/op) | Speedup | Joke alloc (B/op) | Official alloc (B/op) |
+|-----------|-------------:|-----------------:|--------:|------------------:|----------------------:|
+| `long[]`   | 1.9          | 15.9             | **8.4x**  | ~0                | 80,032                |
+| `double[]` | 1.9          | 23.3             | **12.3x** | ~0                | 80,032                |
+| `String[]` | 91.0         | 157.8            | **1.7x**  | 240,000           | 558,920               |
+
+Joke serializes into a reused `ByteBuffer`, so primitive array serialization allocates nothing.
+The official driver allocates a fresh `byte[]` on every call.
+
+### Deserialize
+
+| Operation  | Joke (µs/op) | Official (µs/op) | Speedup   | Joke alloc (B/op) | Official alloc (B/op) |
+|------------|-------------:|-----------------:|----------:|------------------:|----------------------:|
+| `long[]`   | 5.3          | 25.3             | **4.8x**  | 80,016            | 80,016                |
+| `double[]` | 5.3          | 25.4             | **4.8x**  | 80,072            | 80,016                |
+| `String[]` | 169.6        | 94.5             | **0.6x**  | 760,016           | 520,016               |
+
+Primitive array deserialization uses bulk `ByteBuffer` reads, giving a ~5x speedup with identical
+allocation (the output array itself is unavoidable). Symbol (`String[]`) deserialization is currently
+slower than the official driver and allocates more — an area for future improvement.
+
 ## Local Development Setup
 
 ### Installing kdb+

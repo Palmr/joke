@@ -118,10 +118,8 @@ public class KdbProtocol {
    * Write String to serialization buffer
    *
    * @param string String to serialize
-   * @throws UnsupportedEncodingException If there is an issue with the registered encoding
    */
-  protected void writeStringToBuffer(final String string, final ByteBuffer buffer)
-      throws UnsupportedEncodingException {
+  protected void writeStringToBuffer(final String string, final ByteBuffer buffer) {
     if (string != null && !string.isEmpty()) {
       final var stringBytes = encodeString(string);
       for (int idx = 0; idx < stringBytes.length && stringBytes[idx] != NULL_BYTE; idx++) {
@@ -407,8 +405,7 @@ public class KdbProtocol {
    * @param messageBuffer incoming message buffer
    * @return Deserialized string using registered encoding
    */
-  private String deserializeString(final ByteBuffer messageBuffer)
-      throws UnsupportedEncodingException {
+  private String deserializeString(final ByteBuffer messageBuffer) {
     final var startPos = messageBuffer.position();
     while (messageBuffer.get() != NULL_BYTE) {}
     final var endPos = messageBuffer.position();
@@ -750,9 +747,8 @@ public class KdbProtocol {
    *
    * @param string String to be serialized
    * @return number of bytes required to serialize a string
-   * @throws UnsupportedEncodingException If the named charset is not supported
    */
-  protected int lengthOfEncodedString(final String string) throws UnsupportedEncodingException {
+  protected int lengthOfEncodedString(final String string) {
     if (string == null) {
       return 0;
     }
@@ -765,7 +761,7 @@ public class KdbProtocol {
     }
   }
 
-  private byte[] encodeString(final String string) throws UnsupportedEncodingException {
+  private byte[] encodeString(final String string) {
     return string.getBytes(stringEncoding);
   }
 
@@ -774,9 +770,8 @@ public class KdbProtocol {
    *
    * @param obj Object to be serialized
    * @return number of bytes required to serialize an object.
-   * @throws UnsupportedEncodingException If the named charset is not supported
    */
-  protected int lengthOfObject(final Object obj) throws UnsupportedEncodingException {
+  protected int lengthOfObject(final Object obj) {
     final DataType type = DataType.getKdbType(obj);
     if (type == DataType.Dict) {
       return Byte.BYTES
@@ -833,9 +828,8 @@ public class KdbProtocol {
    *
    * @param obj Object to be serialized
    * @return number of elements in an object.
-   * @throws UnsupportedEncodingException If the named charset is not supported
    */
-  private int elementCount(final Object obj) throws UnsupportedEncodingException {
+  private int elementCount(final Object obj) {
     if (obj instanceof Dict) {
       return elementCount(((Dict) obj).keys());
     }

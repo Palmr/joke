@@ -1,5 +1,6 @@
 plugins {
     id("java-library")
+    id("maven-publish")
     id("com.diffplug.spotless") version "7.0.4"
 }
 
@@ -31,6 +32,45 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+
+            pom {
+                name.set("joke")
+                description.set("Java KDB client library")
+                url.set("https://github.com/Palmr/joke")
+
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+
+                developers {
+                    developer {
+                        name.set("Nick Palmer")
+                        email.set("nick@palmr.co.uk")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:git://github.com/Palmr/joke.git")
+                    developerConnection.set("scm:git:ssh://github.com/Palmr/joke.git")
+                    url.set("https://github.com/Palmr/joke")
+                }
+            }
+        }
+    }
 }
 
 spotless {

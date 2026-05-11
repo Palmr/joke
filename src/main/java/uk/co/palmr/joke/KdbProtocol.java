@@ -159,8 +159,8 @@ public class KdbProtocol {
       case Flip f -> {
         messageBuffer.put(NULL_BYTE);
         messageBuffer.put(DataType.Dict.getTypeCode());
-        serialize(f.columnNames, messageBuffer);
-        serialize(f.columns, messageBuffer);
+        serialize(f.columnNames(), messageBuffer);
+        serialize(f.columns(), messageBuffer);
       }
       case char[] chars -> {
         messageBuffer.put(NULL_BYTE);

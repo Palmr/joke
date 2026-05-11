@@ -381,8 +381,8 @@ public class SerDesTest {
       buffer.position(0);
 
       final Flip actual = (Flip) kdbProtocol.deserializeResponseMessage(buffer);
-      assertArrayEquals(input.columns, actual.columns);
-      assertArrayEquals(input.columnNames, actual.columnNames);
+      assertArrayEquals(input.columns(), actual.columns());
+      assertArrayEquals(input.columnNames(), actual.columnNames());
     } catch (KdbException e) {
       fail(e);
     }
@@ -500,8 +500,8 @@ public class SerDesTest {
     final Dict dict = new Dict(x, y);
     final Flip flip = new Flip(dict);
 
-    assertArrayEquals(result.columns, flip.columns);
-    assertArrayEquals(result.columnNames, flip.columnNames);
+    assertArrayEquals(result.columns(), flip.columns());
+    assertArrayEquals(result.columnNames(), flip.columnNames());
   }
 
   private void assertSerDesAtom(final Object data) {

@@ -24,8 +24,8 @@ class FlipTest {
     String[][] y = new String[][] {{"Value1", "Value2", "Value3"}};
     Dict dict = new Dict(x, y);
     Flip flip = new Flip(dict);
-    assertArrayEquals(x, flip.columnNames);
-    assertArrayEquals(y, flip.columns);
+    assertArrayEquals(x, flip.columnNames());
+    assertArrayEquals(y, flip.columns());
   }
 
   @Test

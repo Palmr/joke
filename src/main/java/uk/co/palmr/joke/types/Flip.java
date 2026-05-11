@@ -21,12 +21,7 @@ import java.util.Arrays;
  * relational databases. An introduction can be found at <a
  * href="https://code.kx.com/q4m3/8_Tables/">https://code.kx.com/q4m3/8_Tables/</a>
  */
-public class Flip {
-  /** Array of column names. */
-  public String[] columnNames;
-
-  /** Array of arrays of the column values. */
-  public Object[] columns;
+public record Flip(String[] columnNames, Object[] columns) {
 
   /**
    * Create a Flip (KDB+ table) from the values stored in a Dict.
@@ -35,8 +30,7 @@ public class Flip {
    *     (keys), with an array of arrays for the column values
    */
   public Flip(Dict dict) {
-    columnNames = (String[]) dict.keys();
-    columns = (Object[]) dict.values();
+    this((String[]) dict.keys(), (Object[]) dict.values());
   }
 
   /**
@@ -45,10 +39,7 @@ public class Flip {
    * @param columnNames Array of column names
    * @param columns Array of arrays of the column values
    */
-  public Flip(String[] columnNames, Object[] columns) {
-    this.columnNames = columnNames;
-    this.columns = columns;
-  }
+  public Flip {}
 
   /**
    * Returns the column values given the column name

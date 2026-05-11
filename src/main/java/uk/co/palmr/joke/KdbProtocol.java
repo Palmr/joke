@@ -506,27 +506,32 @@ public class KdbProtocol {
         return uuidArr;
       case ByteArray:
         byte[] byteArr = new byte[n];
-        for (; i < n; i++) byteArr[i] = messageBuffer.get();
+        messageBuffer.get(byteArr);
         return byteArr;
       case ShortArray:
         short[] shortArr = new short[n];
-        for (; i < n; i++) shortArr[i] = deserializeShort(messageBuffer);
+        messageBuffer.asShortBuffer().get(shortArr);
+        messageBuffer.position(messageBuffer.position() + n * Short.BYTES);
         return shortArr;
       case IntArray:
         int[] intArr = new int[n];
-        for (; i < n; i++) intArr[i] = messageBuffer.getInt();
+        messageBuffer.asIntBuffer().get(intArr);
+        messageBuffer.position(messageBuffer.position() + n * Integer.BYTES);
         return intArr;
       case LongArray:
         long[] longArr = new long[n];
-        for (; i < n; i++) longArr[i] = deserializeLong(messageBuffer);
+        messageBuffer.asLongBuffer().get(longArr);
+        messageBuffer.position(messageBuffer.position() + n * Long.BYTES);
         return longArr;
       case FloatArray:
         float[] floatArr = new float[n];
-        for (; i < n; i++) floatArr[i] = deserializeFloat(messageBuffer);
+        messageBuffer.asFloatBuffer().get(floatArr);
+        messageBuffer.position(messageBuffer.position() + n * Float.BYTES);
         return floatArr;
       case DoubleArray:
         double[] doubleArr = new double[n];
-        for (; i < n; i++) doubleArr[i] = deserializeDouble(messageBuffer);
+        messageBuffer.asDoubleBuffer().get(doubleArr);
+        messageBuffer.position(messageBuffer.position() + n * Double.BYTES);
         return doubleArr;
       case CharArray:
         char[] charArr =

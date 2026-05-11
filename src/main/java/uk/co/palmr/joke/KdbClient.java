@@ -159,7 +159,7 @@ public class KdbClient implements AutoCloseable {
       kdbProtocol.setVersion(Math.min(authenticateResponse.getVersion(), KDB_IPC_VERSION));
     } catch (IOException e) {
       close();
-      throw new KdbException("Access Denied");
+      throw new KdbException("Access Denied", e);
     }
   }
 

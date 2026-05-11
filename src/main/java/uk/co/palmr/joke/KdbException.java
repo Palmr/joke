@@ -16,4 +16,8 @@ public class KdbException extends Exception {
   public KdbException(String message) {
     super(message);
   }
+
+  public KdbException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

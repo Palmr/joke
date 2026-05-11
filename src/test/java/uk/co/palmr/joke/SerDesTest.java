@@ -17,7 +17,6 @@ import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static uk.co.palmr.joke.KdbProtocol.DAYS_BETWEEN_1970_2000;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -365,7 +364,7 @@ public class SerDesTest {
       final Dict actual = (Dict) kdbProtocol.deserializeResponseMessage(buffer);
       assertArrayEquals((String[]) input.keys(), (String[]) actual.keys());
       assertArrayEquals((String[]) input.values(), (String[]) actual.values());
-    } catch (UnsupportedEncodingException | KdbException e) {
+    } catch (KdbException e) {
       fail(e);
     }
   }
@@ -384,13 +383,13 @@ public class SerDesTest {
       final Flip actual = (Flip) kdbProtocol.deserializeResponseMessage(buffer);
       assertArrayEquals(input.columns, actual.columns);
       assertArrayEquals(input.columnNames, actual.columnNames);
-    } catch (UnsupportedEncodingException | KdbException e) {
+    } catch (KdbException e) {
       fail(e);
     }
   }
 
   @Test
-  public void testDeserializeLittleEndInteger() throws KdbException, UnsupportedEncodingException {
+  public void testDeserializeLittleEndInteger() throws KdbException {
     byte[] buff = {
       (byte) 0x01,
       (byte) 0x00,
@@ -415,7 +414,7 @@ public class SerDesTest {
   }
 
   @Test
-  public void testDeserializeLittleEndLong() throws KdbException, UnsupportedEncodingException {
+  public void testDeserializeLittleEndLong() throws KdbException {
     byte[] buff = {
       (byte) 0x01,
       (byte) 0x00,
@@ -444,7 +443,7 @@ public class SerDesTest {
   }
 
   @Test
-  public void testDeserializeEmptyTable() throws KdbException, UnsupportedEncodingException {
+  public void testDeserializeEmptyTable() throws KdbException {
     // response from executing '([] name:(); iq:())'
     byte[] buff = {
       (byte) 0x01,
@@ -512,7 +511,7 @@ public class SerDesTest {
       buffer.position(0);
 
       assertEquals(data, kdbProtocol.deserializeResponseMessage(buffer));
-    } catch (UnsupportedEncodingException | KdbException e) {
+    } catch (KdbException e) {
       fail(e);
     }
   }
@@ -524,7 +523,7 @@ public class SerDesTest {
       buffer.position(0);
 
       assertArrayEquals(data, (Object[]) kdbProtocol.deserializeResponseMessage(buffer));
-    } catch (UnsupportedEncodingException | KdbException e) {
+    } catch (KdbException e) {
       fail(e);
     }
   }
@@ -536,7 +535,7 @@ public class SerDesTest {
       buffer.position(0);
 
       assertArrayEquals(data, (boolean[]) kdbProtocol.deserializeResponseMessage(buffer));
-    } catch (UnsupportedEncodingException | KdbException e) {
+    } catch (KdbException e) {
       fail(e);
     }
   }
@@ -548,7 +547,7 @@ public class SerDesTest {
       buffer.position(0);
 
       assertArrayEquals(data, (byte[]) kdbProtocol.deserializeResponseMessage(buffer));
-    } catch (UnsupportedEncodingException | KdbException e) {
+    } catch (KdbException e) {
       fail(e);
     }
   }
@@ -560,7 +559,7 @@ public class SerDesTest {
       buffer.position(0);
 
       assertArrayEquals(data, (short[]) kdbProtocol.deserializeResponseMessage(buffer));
-    } catch (UnsupportedEncodingException | KdbException e) {
+    } catch (KdbException e) {
       fail(e);
     }
   }
@@ -572,7 +571,7 @@ public class SerDesTest {
       buffer.position(0);
 
       assertArrayEquals(data, (int[]) kdbProtocol.deserializeResponseMessage(buffer));
-    } catch (UnsupportedEncodingException | KdbException e) {
+    } catch (KdbException e) {
       fail(e);
     }
   }
@@ -584,7 +583,7 @@ public class SerDesTest {
       buffer.position(0);
 
       assertArrayEquals(data, (long[]) kdbProtocol.deserializeResponseMessage(buffer));
-    } catch (UnsupportedEncodingException | KdbException e) {
+    } catch (KdbException e) {
       fail(e);
     }
   }
@@ -596,7 +595,7 @@ public class SerDesTest {
       buffer.position(0);
 
       assertArrayEquals(data, (float[]) kdbProtocol.deserializeResponseMessage(buffer));
-    } catch (UnsupportedEncodingException | KdbException e) {
+    } catch (KdbException e) {
       fail(e);
     }
   }
@@ -608,7 +607,7 @@ public class SerDesTest {
       buffer.position(0);
 
       assertArrayEquals(data, (double[]) kdbProtocol.deserializeResponseMessage(buffer));
-    } catch (UnsupportedEncodingException | KdbException e) {
+    } catch (KdbException e) {
       fail(e);
     }
   }
@@ -620,7 +619,7 @@ public class SerDesTest {
       buffer.position(0);
 
       assertArrayEquals(data, (char[]) kdbProtocol.deserializeResponseMessage(buffer));
-    } catch (UnsupportedEncodingException | KdbException e) {
+    } catch (KdbException e) {
       fail(e);
     }
   }

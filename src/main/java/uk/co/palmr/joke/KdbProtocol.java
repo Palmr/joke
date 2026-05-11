@@ -16,8 +16,6 @@ package uk.co.palmr.joke;
 import static java.time.ZoneOffset.UTC;
 import static uk.co.palmr.joke.types.DataType.Lambda;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -75,14 +73,13 @@ public class KdbProtocol {
    * @param msg object to serialize
    * @param kdbMessageHeader flyweight kdb message header
    * @param messageBuffer buffer to serialize data into
-   * @throws IOException should not throw
    */
   protected void serializeMessage(
       final MessageType msgType,
       final Object msg,
       final KdbMessageHeader kdbMessageHeader,
       final ByteBuffer messageBuffer)
-      throws IOException, KdbException {
+      throws KdbException {
     kdbMessageHeader
         .setByteOrder(ByteOrder.BIG_ENDIAN)
         .setMessageType(msgType)
@@ -95,20 +92,19 @@ public class KdbProtocol {
     kdbMessageHeader.setMessageSize(messageBuffer.position());
 
     if (allowCompression && messageBuffer.position() > 2000) {
-      throw new UnsupportedEncodingException("Not yet implemented compression");
+      throw new UnsupportedOperationException("Not yet implemented compression");
       //            kdbMessageHeader.setIsCompressed(true);
       //            compress();
     }
   }
 
   protected Object deserialize(
-      final KdbMessageHeader kdbMessageHeader, final ByteBuffer messageBuffer)
-      throws UnsupportedEncodingException, KdbException {
+      final KdbMessageHeader kdbMessageHeader, final ByteBuffer messageBuffer) throws KdbException {
     messageBuffer.order(kdbMessageHeader.getByteOrder());
 
     messageBuffer.position(KdbMessageHeader.SIZE);
     if (kdbMessageHeader.isCompressed()) {
-      throw new UnsupportedEncodingException("Not yet implemented compression");
+      throw new UnsupportedOperationException("Not yet implemented compression");
       //            uncompress();
     }
     return deserializeResponseMessage(messageBuffer);
@@ -134,10 +130,8 @@ public class KdbProtocol {
    *
    * @param obj Object to serialize
    * @param messageBuffer buffer to serialize to
-   * @throws UnsupportedEncodingException If the named charset (encoding) is not supported
    */
-  protected void serialize(final Object obj, final ByteBuffer messageBuffer)
-      throws UnsupportedEncodingException, KdbException {
+  protected void serialize(final Object obj, final ByteBuffer messageBuffer) throws KdbException {
     final DataType type = DataType.getKdbType(obj);
     messageBuffer.put(type.getTypeCode());
     if (type.isAtom()) {
@@ -403,7 +397,9 @@ public class KdbProtocol {
    */
   private String deserializeString(final ByteBuffer messageBuffer) {
     final var startPos = messageBuffer.position();
-    while (messageBuffer.get() != NULL_BYTE) {}
+    while (messageBuffer.get() != NULL_BYTE) {
+      // advance position to null terminator
+    }
     final var endPos = messageBuffer.position();
     final var stringBytes = new byte[endPos - startPos - 1];
     messageBuffer.get(startPos, stringBytes);
@@ -416,8 +412,7 @@ public class KdbProtocol {
    *
    * @param messageBuffer incoming message buffer private @return deserialized object
    */
-  protected Object deserializeResponseMessage(final ByteBuffer messageBuffer)
-      throws UnsupportedEncodingException, KdbException {
+  protected Object deserializeResponseMessage(final ByteBuffer messageBuffer) throws KdbException {
     int i = 0;
     int n;
     DataType type = DataType.getKdbType(messageBuffer.get());

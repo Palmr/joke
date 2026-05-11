@@ -83,19 +83,17 @@ public class KdbProtocol {
       final KdbMessageHeader kdbMessageHeader,
       final ByteBuffer messageBuffer)
       throws IOException, KdbException {
-    int length = KdbMessageHeader.SIZE + lengthOfObject(msg);
-
-    messageBuffer.limit(length);
-
     kdbMessageHeader
         .setByteOrder(ByteOrder.BIG_ENDIAN)
         .setMessageType(msgType)
         .setCompressed(false)
-        .setPad()
-        .setMessageSize(length);
+        .setPad();
 
     messageBuffer.position(KdbMessageHeader.SIZE);
     serialize(msg, messageBuffer);
+
+    kdbMessageHeader.setMessageSize(messageBuffer.position());
+
     if (allowCompression && messageBuffer.position() > 2000) {
       throw new UnsupportedEncodingException("Not yet implemented compression");
       //            kdbMessageHeader.setIsCompressed(true);
@@ -744,84 +742,8 @@ public class KdbProtocol {
         .plusNanos((int) (timeAsLong - NANOS_IN_SEC * d));
   }
 
-  /**
-   * A helper function for nx, calculates the number of bytes which would be required to serialize
-   * the supplied string.
-   *
-   * @param string String to be serialized
-   * @return number of bytes required to serialize a string
-   */
-  protected int lengthOfEncodedString(final String string) {
-    if (string == null) {
-      return 0;
-    }
-
-    int nullTerminatorPosition;
-    if (-1 < (nullTerminatorPosition = string.indexOf(0x00))) {
-      return string.substring(0, nullTerminatorPosition).getBytes(stringEncoding).length;
-    } else {
-      return string.getBytes(stringEncoding).length;
-    }
-  }
-
   private byte[] encodeString(final String string) {
     return string.getBytes(stringEncoding);
-  }
-
-  /**
-   * Calculates the number of bytes which would be required to serialize the supplied object.
-   *
-   * @param obj Object to be serialized
-   * @return number of bytes required to serialize an object.
-   */
-  protected int lengthOfObject(final Object obj) {
-    final DataType type = DataType.getKdbType(obj);
-    if (type == DataType.Dict) {
-      return Byte.BYTES
-          + lengthOfObject(((Dict) obj).keys())
-          + lengthOfObject(((Dict) obj).values());
-    }
-    if (type == DataType.Flip) {
-      return Byte.BYTES
-          + // flip type id byte
-          Byte.BYTES
-          + // null pad byte
-          Byte.BYTES
-          + // dict type id byte
-          lengthOfObject(((Flip) obj).columnNames)
-          + lengthOfObject(((Flip) obj).columns);
-    }
-    if (type.isAtom()) {
-      if (type == DataType.String) {
-        return Byte.BYTES
-            + lengthOfEncodedString((String) obj)
-            + Byte.BYTES; // Null terminator byte
-      } else {
-        return Byte.BYTES + type.getAtomicByteSize();
-      }
-    }
-
-    int numBytes =
-        Byte.BYTES
-            + // array type id byte
-            Byte.BYTES
-            + // null pad byte
-            Integer.BYTES; // numElements int
-
-    int numElements = elementCount(obj);
-    if (type == DataType.List || type == DataType.StringArray) {
-      for (int idx = 0; idx < numElements; ++idx) {
-        if (type == DataType.StringArray) {
-          numBytes +=
-              lengthOfEncodedString(((String[]) obj)[idx]) + Byte.BYTES; // Null terminator byte
-        } else {
-          numBytes += lengthOfObject(((Object[]) obj)[idx]);
-        }
-      }
-    } else {
-      numBytes += numElements * type.getAtomicByteSize();
-    }
-    return numBytes;
   }
 
   /**

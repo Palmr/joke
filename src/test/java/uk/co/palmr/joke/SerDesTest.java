@@ -505,41 +505,6 @@ public class SerDesTest {
     assertArrayEquals(result.columnNames, flip.columnNames);
   }
 
-  @Test
-  public void testStringLenZeroForNull() throws UnsupportedEncodingException {
-    assertEquals(0, kdbProtocol.lengthOfEncodedString(null));
-  }
-
-  @Test
-  public void testStringLen() throws UnsupportedEncodingException {
-    assertEquals(12, kdbProtocol.lengthOfEncodedString("Hello world!"));
-  }
-
-  @Test
-  public void testStringLenForNullTerminatedInput() throws UnsupportedEncodingException {
-    assertEquals(
-        2,
-        kdbProtocol.lengthOfEncodedString(
-            new String(
-                new char[] {'H', 'i', 0x00, 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', '!'})));
-  }
-
-  @Test
-  void testLengthOfObject() throws UnsupportedEncodingException {
-    String[] x = new String[] {"Key"};
-    String[][] y = new String[][] {{"Value1", "Value2", "Value3"}};
-    Dict dict = new Dict(x, y);
-    Flip flip = new Flip(dict);
-
-    assertEquals(44, kdbProtocol.lengthOfObject(dict));
-    assertEquals(46, kdbProtocol.lengthOfObject(flip));
-    assertEquals(14, kdbProtocol.lengthOfObject("Hello world!"));
-    assertEquals(2, kdbProtocol.lengthOfObject((byte) 0x00));
-    assertEquals(16, kdbProtocol.lengthOfObject(new Integer[] {1, 2}));
-    assertEquals(18, kdbProtocol.lengthOfObject(new String[] {"hello", "world"}));
-    assertEquals(8, kdbProtocol.lengthOfObject(new byte[] {1, 2}));
-  }
-
   private void assertSerDesAtom(final Object data) {
     try {
       kdbProtocol.serialize(data, buffer);

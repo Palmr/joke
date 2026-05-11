@@ -4,15 +4,7 @@ Java Only KDB+ client library
 
 Originally https://github.com/KxSystems/javakdb but with more Java standards, fewer features, and (maybe one day) much less pressure on the GC.
 
-## Main differences from official client
-
- - Joke only connects via TCP, no TLS/UDS
- - Joke is made for single-threaded use only
- - Joke only supports sync messages right now due to single threaded nature
- - Joke doesn't support compression yet
- - Joke has a fixed message buffer size for query and response
- - Joke has somewhat readable code
- - Joke is not ready for production use, it's just a more Java-esque starting point for some ideas I had
+It might sound like a joke, but it's seriously better.
 
 ## Benchmarks
 
@@ -41,6 +33,46 @@ The official driver allocates a fresh `byte[]` on every call.
 Primitive array deserialization uses bulk `ByteBuffer` reads, giving a ~5x speedup with identical
 allocation (the output array itself is unavoidable). Symbol (`String[]`) deserialization is at parity
 with the official driver on both time and allocation.
+
+## Current differences from official client
+
+- Joke only connects via TCP, no TLS/UDS
+- Joke is made for single-threaded use only
+- Joke only supports sync messages right now due to single threaded nature
+- Joke doesn't support compression yet
+- Joke has a fixed message buffer size for query and response
+- Joke has somewhat readable code
+- Joke is not ready for production use, it's just a more Java-esque starting point for some ideas I had
+
+## Roadmap
+
+### Compression
+IPC compression is stubbed out and will throw if triggered. Implementing it would remove the
+message-size restriction and make large payloads practical. The wire format is documented in the
+[KX IPC spec](https://code.kx.com/q/basics/ipc/#compression).
+
+### Async messaging
+The current design is intentionally single-threaded: one buffer, one thread, synchronous
+request/response only. Supporting async (fire-and-forget sends and unsolicited inbound messages)
+requires rethinking the threading model — likely a dedicated reader thread and a callback or
+`CompletableFuture`-based API — without compromising the low-allocation path for the common
+synchronous case.
+
+### Publish to a KDB+ consumer
+Sending async (one-way) messages — e.g. writing to a tickerplant — only requires sending with
+message type `async` and not waiting for a response. This is a small addition on top of the current
+sync path but needs the API surface to expose it cleanly.
+
+### Subscribe to a KDB+ publisher
+Receiving a stream of unsolicited async messages from a KDB+ publisher (e.g. via `.u.sub`) requires
+the dedicated reader thread from the async item above, plus a dispatch mechanism to route inbound
+messages to application callbacks. This and async messaging are the two items most likely to be
+designed together.
+
+### TLS / Unix Domain Sockets
+The official driver supports both. The goal is to bring them back cleanly using modern Java APIs —
+TLS via `SSLEngine` with `SocketChannel` wrapping, and UDS via `UnixDomainSocketAddress`
+(available since Java 16) rather than the reflection-based workarounds in the original.
 
 ## Local Development Setup
 

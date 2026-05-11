@@ -170,8 +170,6 @@ public class KdbClient implements AutoCloseable {
   }
 
   private void resetBuffer() {
-    messageBuffer.limit(messageBuffer.capacity());
-    messageBuffer.compact();
     messageBuffer.clear();
   }
 

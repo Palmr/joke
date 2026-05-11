@@ -24,6 +24,7 @@ public class KdbMessageHeader {
   private static final int OFFSET_IS_LITTLE_ENDIAN = 0;
   private static final int OFFSET_MESSAGE_TYPE = 1;
   private static final int OFFSET_IS_COMPRESSED = 2;
+  private static final int OFFSET_PAD = 3;
   private static final int OFFSET_MESSAGE_SIZE = 4;
 
   private final ByteBuffer buffer;
@@ -64,6 +65,11 @@ public class KdbMessageHeader {
 
   public KdbMessageHeader setCompressed(final boolean isCompressed) {
     buffer.put(OFFSET_IS_COMPRESSED, isCompressed ? TRUE : FALSE);
+    return this;
+  }
+
+  public KdbMessageHeader setPad() {
+    buffer.put(OFFSET_PAD, FALSE);
     return this;
   }
 

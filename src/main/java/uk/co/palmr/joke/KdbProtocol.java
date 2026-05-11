@@ -90,6 +90,7 @@ public class KdbProtocol {
     kdbMessageHeader
         .setByteOrder(ByteOrder.BIG_ENDIAN)
         .setMessageType(msgType)
+        .setCompressed(false)
         .setMessageSize(length);
 
     messageBuffer.position(KdbMessageHeader.SIZE);

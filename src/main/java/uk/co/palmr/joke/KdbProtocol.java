@@ -389,11 +389,11 @@ public class KdbProtocol {
     while (messageBuffer.get() != NULL_BYTE) {
       // advance position to null terminator
     }
-    final var endPos = messageBuffer.position();
-    final var stringBytes = new byte[endPos - startPos - 1];
-    messageBuffer.get(startPos, stringBytes);
-
-    return (startPos == endPos - 1) ? "" : new String(stringBytes, stringEncoding);
+    final var length = messageBuffer.position() - startPos - 1;
+    return length == 0
+        ? ""
+        : new String(
+            messageBuffer.array(), messageBuffer.arrayOffset() + startPos, length, stringEncoding);
   }
 
   /**

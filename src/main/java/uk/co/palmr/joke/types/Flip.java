@@ -16,70 +16,71 @@ package uk.co.palmr.joke.types;
 import java.util.Arrays;
 
 /**
- * {@code Flip} represents a kdb+ table (an array of column names, and an array of arrays containing the column data).
- * q tables are column-oriented, in contrast to the row-oriented tables in relational databases.
- * An introduction can be found at <a href="https://code.kx.com/q4m3/8_Tables/">https://code.kx.com/q4m3/8_Tables/</a>
+ * {@code Flip} represents a kdb+ table (an array of column names, and an array of arrays containing
+ * the column data). q tables are column-oriented, in contrast to the row-oriented tables in
+ * relational databases. An introduction can be found at <a
+ * href="https://code.kx.com/q4m3/8_Tables/">https://code.kx.com/q4m3/8_Tables/</a>
  */
 public class Flip {
-    /**
-     * Array of column names.
-     */
-    public String[] columnNames;
-    /**
-     * Array of arrays of the column values.
-     */
-    public Object[] columns;
+  /** Array of column names. */
+  public String[] columnNames;
 
-    /**
-     * Create a Flip (KDB+ table) from the values stored in a Dict.
-     *
-     * @param dict Values stored in the dict should be an array of Strings for the column names (keys), with an
-     *             array of arrays for the column values
-     */
-    public Flip(Dict dict) {
-        columnNames = (String[]) dict.x;
-        columns = (Object[]) dict.y;
-    }
+  /** Array of arrays of the column values. */
+  public Object[] columns;
 
-    /**
-     * Create a Flip (KDB+ table) from array of column names and array of arrays of the column values.
-     *
-     * @param columnNames Array of column names
-     * @param columns Array of arrays of the column values
-     */
-    public Flip(String[] columnNames, Object[] columns) {
-        this.columnNames = columnNames;
-        this.columns = columns;
-    }
+  /**
+   * Create a Flip (KDB+ table) from the values stored in a Dict.
+   *
+   * @param dict Values stored in the dict should be an array of Strings for the column names
+   *     (keys), with an array of arrays for the column values
+   */
+  public Flip(Dict dict) {
+    columnNames = (String[]) dict.x;
+    columns = (Object[]) dict.y;
+  }
 
-    /**
-     * Returns the column values given the column name
-     *
-     * @param s The column name
-     * @return The value(s) associated with the column name which can be casted to an array of objects.
-     */
-    public Object at(String s) {
-        return columns[find(columnNames, s)];
-    }
+  /**
+   * Create a Flip (KDB+ table) from array of column names and array of arrays of the column values.
+   *
+   * @param columnNames Array of column names
+   * @param columns Array of arrays of the column values
+   */
+  public Flip(String[] columnNames, Object[] columns) {
+    this.columnNames = columnNames;
+    this.columns = columns;
+  }
 
-    /**
-     * Finds index of string in an array
-     * @param x String array to search
-     * @param y The String to locate in the array
-     * @return The index at which the String resides
-     */
-    private static int find(String[] x,String y){
-        int i=0;
-        while(i<x.length&&!x[i].equals(y))
-            ++i;
-        return i;
-    }
+  /**
+   * Returns the column values given the column name
+   *
+   * @param s The column name
+   * @return The value(s) associated with the column name which can be casted to an array of
+   *     objects.
+   */
+  public Object at(String s) {
+    return columns[find(columnNames, s)];
+  }
 
-    @Override
-    public String toString() {
-        return "Flip{" +
-                "columnNames=" + Arrays.toString(columnNames) +
-                ", columns=" + Arrays.deepToString(columns) +
-                '}';
-    }
+  /**
+   * Finds index of string in an array
+   *
+   * @param x String array to search
+   * @param y The String to locate in the array
+   * @return The index at which the String resides
+   */
+  private static int find(String[] x, String y) {
+    int i = 0;
+    while (i < x.length && !x[i].equals(y)) ++i;
+    return i;
+  }
+
+  @Override
+  public String toString() {
+    return "Flip{"
+        + "columnNames="
+        + Arrays.toString(columnNames)
+        + ", columns="
+        + Arrays.deepToString(columns)
+        + '}';
+  }
 }

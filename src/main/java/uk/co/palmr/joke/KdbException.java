@@ -13,7 +13,7 @@
 package uk.co.palmr.joke;
 
 public class KdbException extends Exception {
-    public KdbException(String message) {
-        super(message);
-    }
+  public KdbException(String message) {
+    super(message);
+  }
 }

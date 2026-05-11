@@ -13,17 +13,17 @@
 package uk.co.palmr.joke.types;
 
 public enum MessageType {
-    async(0),
-    sync(1),
-    response(2);
+  async(0),
+  sync(1),
+  response(2);
 
-    private final int typeCode;
+  private final int typeCode;
 
-    MessageType(final int typeCode) {
-        this.typeCode = typeCode;
-    }
+  MessageType(final int typeCode) {
+    this.typeCode = typeCode;
+  }
 
-    public byte getTypeCode() {
-        return (byte) typeCode;
-    }
+  public byte getTypeCode() {
+    return (byte) typeCode;
+  }
 }

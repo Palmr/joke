@@ -16,21 +16,23 @@ package uk.co.palmr.joke;
 import java.text.DecimalFormat;
 
 public class NumberFormatter {
-    /**
-     * Creates a string from int with left padding of 0s, if less than 2 digits
-     * @param i Integer to convert to string
-     * @return String representation of int with zero padding
-     */
-    public static String i2(int i){
-        return new DecimalFormat("00").format(i);
-    }
+  /**
+   * Creates a string from int with left padding of 0s, if less than 2 digits
+   *
+   * @param i Integer to convert to string
+   * @return String representation of int with zero padding
+   */
+  public static String i2(int i) {
+    return new DecimalFormat("00").format(i);
+  }
 
-    /**
-     * Creates a string from int with left padding of 0s, if less than 9 digits
-     * @param i Integer to convert to string
-     * @return String representation of int with zero padding
-     */
-    public static String i9(int i){
-        return new DecimalFormat("000000000").format(i);
-    }
+  /**
+   * Creates a string from int with left padding of 0s, if less than 9 digits
+   *
+   * @param i Integer to convert to string
+   * @return String representation of int with zero padding
+   */
+  public static String i9(int i) {
+    return new DecimalFormat("000000000").format(i);
+  }
 }

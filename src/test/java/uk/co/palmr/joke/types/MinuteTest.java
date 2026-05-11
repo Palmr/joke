@@ -13,49 +13,48 @@
  */
 package uk.co.palmr.joke.types;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import org.junit.jupiter.api.Test;
+
 class MinuteTest {
-    @Test
-    public void testMinuteToString() {
-        Minute mon = new Minute(22);
-        assertEquals("00:22", mon.toString());
-        mon = new Minute(Integer.MIN_VALUE);
-        assertEquals("", mon.toString());
-    }
+  @Test
+  public void testMinuteToString() {
+    Minute mon = new Minute(22);
+    assertEquals("00:22", mon.toString());
+    mon = new Minute(Integer.MIN_VALUE);
+    assertEquals("", mon.toString());
+  }
 
-    @Test
-    public void testMinuteEquals() {
-        Minute mon1 = new Minute(22);
-        Minute mon2 = new Minute(22);
-        Minute mon3 = new Minute(1);
-        assertEquals(mon1, mon1);
-        assertEquals(mon1, mon2);
-        assertNotEquals(mon1, mon3);
-        assertNotEquals(mon1, "test");
-    }
+  @Test
+  public void testMinuteEquals() {
+    Minute mon1 = new Minute(22);
+    Minute mon2 = new Minute(22);
+    Minute mon3 = new Minute(1);
+    assertEquals(mon1, mon1);
+    assertEquals(mon1, mon2);
+    assertNotEquals(mon1, mon3);
+    assertNotEquals(mon1, "test");
+  }
 
-    @Test
-    public void testMinuteHashCode() {
-        Minute mon1 = new Minute(22);
-        Minute mon2 = new Minute(22);
-        Minute mon3 = new Minute(1);
-        assertEquals(mon1.hashCode(), mon1.hashCode());
-        assertEquals(mon1.hashCode(), mon2.hashCode());
-        assertNotEquals(mon1.hashCode(), mon3.hashCode());
-    }
+  @Test
+  public void testMinuteHashCode() {
+    Minute mon1 = new Minute(22);
+    Minute mon2 = new Minute(22);
+    Minute mon3 = new Minute(1);
+    assertEquals(mon1.hashCode(), mon1.hashCode());
+    assertEquals(mon1.hashCode(), mon2.hashCode());
+    assertNotEquals(mon1.hashCode(), mon3.hashCode());
+  }
 
-    @Test
-    public void testMinuteCompareTo() {
-        Minute mon1 = new Minute(22);
-        Minute mon2 = new Minute(22);
-        Minute mon3 = new Minute(1);
-        assertEquals(0, mon1.compareTo(mon1));
-        assertEquals(0, mon1.compareTo(mon2));
-        assertEquals(21, mon1.compareTo(mon3));
-    }
-
+  @Test
+  public void testMinuteCompareTo() {
+    Minute mon1 = new Minute(22);
+    Minute mon2 = new Minute(22);
+    Minute mon3 = new Minute(1);
+    assertEquals(0, mon1.compareTo(mon1));
+    assertEquals(0, mon1.compareTo(mon2));
+    assertEquals(21, mon1.compareTo(mon3));
+  }
 }

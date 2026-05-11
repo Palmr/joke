@@ -1,5 +1,6 @@
 plugins {
     id("java-library")
+    id("com.diffplug.spotless") version "7.0.4"
 }
 
 group = "uk.co.palmr"
@@ -30,4 +31,13 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+spotless {
+    java {
+        googleJavaFormat("1.27.0")
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }

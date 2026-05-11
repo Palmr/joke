@@ -17,41 +17,40 @@ import static uk.co.palmr.joke.KdbProtocol.NULL_INT;
 import static uk.co.palmr.joke.NumberFormatter.i2;
 
 /**
- * {@code Second} represents kdb+ second type, which is a point in time represented in seconds since midnight.
+ * {@code Second} represents kdb+ second type, which is a point in time represented in seconds since
+ * midnight.
  */
 public class Second implements Comparable<Second> {
-    /**
-     * Number of seconds since midnight.
-     */
-    public int i;
+  /** Number of seconds since midnight. */
+  public int i;
 
-    /**
-     * Create a KDB+ representation of 'second' type from the q language
-     * (point in time represented in seconds since midnight)
-     *
-     * @param x Number of seconds since midnight
-     */
-    public Second(int x) {
-        i = x;
-    }
+  /**
+   * Create a KDB+ representation of 'second' type from the q language (point in time represented in
+   * seconds since midnight)
+   *
+   * @param x Number of seconds since midnight
+   */
+  public Second(int x) {
+    i = x;
+  }
 
-    @Override
-    public String toString() {
-        return i == NULL_INT ? "" : new Minute(i / 60).toString() + ':' + i2(i % 60);
-    }
+  @Override
+  public String toString() {
+    return i == NULL_INT ? "" : new Minute(i / 60).toString() + ':' + i2(i % 60);
+  }
 
-    @Override
-    public boolean equals(final Object o) {
-        return ((o instanceof Second) && (((Second) o).i == i));
-    }
+  @Override
+  public boolean equals(final Object o) {
+    return ((o instanceof Second) && (((Second) o).i == i));
+  }
 
-    @Override
-    public int hashCode() {
-        return i;
-    }
+  @Override
+  public int hashCode() {
+    return i;
+  }
 
-    @Override
-    public int compareTo(Second s) {
-        return i - s.i;
-    }
+  @Override
+  public int compareTo(Second s) {
+    return i - s.i;
+  }
 }

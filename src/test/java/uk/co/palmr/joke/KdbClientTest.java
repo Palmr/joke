@@ -12,6 +12,4 @@
  */
 package uk.co.palmr.joke;
 
-class KdbClientTest {
-
-}
+class KdbClientTest {}

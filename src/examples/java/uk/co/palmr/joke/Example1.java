@@ -16,23 +16,23 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class Example1 {
-    public static void main(String[] args) {
-        try (var kdbClient = new KdbClient("localhost", 5010, System.getProperty("user.name"), "mypassword")) {
-//            final var result = kdbClient.send("2+3");
-//            final var result = kdbClient.send("10 100 1000 * (1 2 3;4 5 6;7 8)\n");
+  public static void main(String[] args) {
+    try (var kdbClient =
+        new KdbClient("localhost", 5010, System.getProperty("user.name"), "mypassword")) {
+      //            final var result = kdbClient.send("2+3");
+      //            final var result = kdbClient.send("10 100 1000 * (1 2 3;4 5 6;7 8)\n");
 
-            kdbClient.send("t:([] c1:`a`b`c; c2:10 20 30; c3:1.1 2.2 3.3)");
-            final var result = kdbClient.send("select from t where c2>15,c1 in `b`c");
+      kdbClient.send("t:([] c1:`a`b`c; c2:10 20 30; c3:1.1 2.2 3.3)");
+      final var result = kdbClient.send("select from t where c2>15,c1 in `b`c");
 
-            System.out.println("Result is:");
-            if (result != null && result.getClass().isArray()) {
-                System.out.println(Arrays.deepToString(((Object[])result)));
-            }
-            else {
-                System.out.println(result);
-            }
-        } catch (KdbException | IOException e) {
-            throw new RuntimeException(e);
-        }
+      System.out.println("Result is:");
+      if (result != null && result.getClass().isArray()) {
+        System.out.println(Arrays.deepToString(((Object[]) result)));
+      } else {
+        System.out.println(result);
+      }
+    } catch (KdbException | IOException e) {
+      throw new RuntimeException(e);
     }
+  }
 }

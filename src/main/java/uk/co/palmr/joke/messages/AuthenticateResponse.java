@@ -15,16 +15,16 @@ package uk.co.palmr.joke.messages;
 import java.nio.ByteBuffer;
 
 public class AuthenticateResponse {
-    public static final int SIZE = 1;
-    private static final int OFFSET_VERSION = 0;
+  public static final int SIZE = 1;
+  private static final int OFFSET_VERSION = 0;
 
-    private final ByteBuffer buffer;
+  private final ByteBuffer buffer;
 
-    public AuthenticateResponse(final ByteBuffer buffer) {
-        this.buffer = buffer;
-    }
+  public AuthenticateResponse(final ByteBuffer buffer) {
+    this.buffer = buffer;
+  }
 
-    public byte getVersion() {
-        return buffer.get(OFFSET_VERSION);
-    }
+  public byte getVersion() {
+    return buffer.get(OFFSET_VERSION);
+  }
 }

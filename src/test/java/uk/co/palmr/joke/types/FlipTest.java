@@ -13,36 +13,36 @@
  */
 package uk.co.palmr.joke.types;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.Test;
+
 class FlipTest {
-    @Test
-    public void testFlipConstructor() {
-        String[] x = new String[]{"Key"};
-        String[][] y = new String[][]{{"Value1", "Value2", "Value3"}};
-        Dict dict = new Dict(x, y);
-        Flip flip = new Flip(dict);
-        assertArrayEquals(x, flip.columnNames);
-        assertArrayEquals(y, flip.columns);
-    }
+  @Test
+  public void testFlipConstructor() {
+    String[] x = new String[] {"Key"};
+    String[][] y = new String[][] {{"Value1", "Value2", "Value3"}};
+    Dict dict = new Dict(x, y);
+    Flip flip = new Flip(dict);
+    assertArrayEquals(x, flip.columnNames);
+    assertArrayEquals(y, flip.columns);
+  }
 
-    @Test
-    public void testFlipColumnPosition() {
-        String[] x = new String[]{"Key"};
-        String[][] y = new String[][]{{"Value1", "Value2", "Value3"}};
-        Dict dict = new Dict(x, y);
-        Flip flip = new Flip(dict);
-        assertEquals(y[0], flip.at("Key"));
-    }
+  @Test
+  public void testFlipColumnPosition() {
+    String[] x = new String[] {"Key"};
+    String[][] y = new String[][] {{"Value1", "Value2", "Value3"}};
+    Dict dict = new Dict(x, y);
+    Flip flip = new Flip(dict);
+    assertEquals(y[0], flip.at("Key"));
+  }
 
-    @Test
-    public void testFlipUnknownColumn() {
-        String[] x = new String[]{"Key"};
-        String[][] y = new String[][]{{"Value1", "Value2", "Value3"}};
-        Dict dict = new Dict(x, y);
-        Flip flip = new Flip(dict);
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> flip.at("RUBBISH"));
-    }
+  @Test
+  public void testFlipUnknownColumn() {
+    String[] x = new String[] {"Key"};
+    String[][] y = new String[][] {{"Value1", "Value2", "Value3"}};
+    Dict dict = new Dict(x, y);
+    Flip flip = new Flip(dict);
+    assertThrows(ArrayIndexOutOfBoundsException.class, () -> flip.at("RUBBISH"));
+  }
 }

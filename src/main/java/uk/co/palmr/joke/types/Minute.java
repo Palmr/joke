@@ -17,41 +17,40 @@ import static uk.co.palmr.joke.KdbProtocol.NULL_INT;
 import static uk.co.palmr.joke.NumberFormatter.i2;
 
 /**
- * {@code Minute} represents kdb+ minute type, which is a time represented as the number of minutes from midnight.
+ * {@code Minute} represents kdb+ minute type, which is a time represented as the number of minutes
+ * from midnight.
  */
 public class Minute implements Comparable<Minute> {
-    /**
-     * Number of minutes since midnight.
-     */
-    public int i;
+  /** Number of minutes since midnight. */
+  public int i;
 
-    /**
-     * Create a KDB+ representation of 'minute' type from the q language
-     * (point in time represented in minutes since midnight)
-     *
-     * @param x Number of minutes since midnight
-     */
-    public Minute(int x) {
-        i = x;
-    }
+  /**
+   * Create a KDB+ representation of 'minute' type from the q language (point in time represented in
+   * minutes since midnight)
+   *
+   * @param x Number of minutes since midnight
+   */
+  public Minute(int x) {
+    i = x;
+  }
 
-    @Override
-    public String toString() {
-        return i == NULL_INT ? "" : i2(i / 60) + ":" + i2(i % 60);
-    }
+  @Override
+  public String toString() {
+    return i == NULL_INT ? "" : i2(i / 60) + ":" + i2(i % 60);
+  }
 
-    @Override
-    public boolean equals(final Object o) {
-        return ((o instanceof Minute) && (((Minute) o).i == i));
-    }
+  @Override
+  public boolean equals(final Object o) {
+    return ((o instanceof Minute) && (((Minute) o).i == i));
+  }
 
-    @Override
-    public int hashCode() {
-        return i;
-    }
+  @Override
+  public int hashCode() {
+    return i;
+  }
 
-    @Override
-    public int compareTo(Minute m) {
-        return i - m.i;
-    }
+  @Override
+  public int compareTo(Minute m) {
+    return i - m.i;
+  }
 }

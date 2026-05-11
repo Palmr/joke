@@ -13,53 +13,53 @@
  */
 package uk.co.palmr.joke.types;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import org.junit.jupiter.api.Test;
+
 class MonthTest {
 
-    @Test
-    public void testMonthToString() {
-        final Month month = new Month(22);
-        assertEquals("2001-11", month.toString());
-    }
+  @Test
+  public void testMonthToString() {
+    final Month month = new Month(22);
+    assertEquals("2001-11", month.toString());
+  }
 
-    @Test
-    public void testNullMonthToString() {
-        final Month month = new Month(Integer.MIN_VALUE);
-        assertEquals("", month.toString());
-    }
+  @Test
+  public void testNullMonthToString() {
+    final Month month = new Month(Integer.MIN_VALUE);
+    assertEquals("", month.toString());
+  }
 
-    @Test
-    public void testMonthEquals() {
-        Month mon1 = new Month(22);
-        Month mon2 = new Month(22);
-        Month mon3 = new Month(1);
-        assertEquals(mon1, mon1);
-        assertEquals(mon1, mon2);
-        assertNotEquals(mon1, mon3);
-        assertNotEquals(mon1, "test");
-    }
+  @Test
+  public void testMonthEquals() {
+    Month mon1 = new Month(22);
+    Month mon2 = new Month(22);
+    Month mon3 = new Month(1);
+    assertEquals(mon1, mon1);
+    assertEquals(mon1, mon2);
+    assertNotEquals(mon1, mon3);
+    assertNotEquals(mon1, "test");
+  }
 
-    @Test
-    public void testMonthHashCode() {
-        Month mon1 = new Month(22);
-        Month mon2 = new Month(22);
-        Month mon3 = new Month(1);
-        assertEquals(mon1.hashCode(), mon1.hashCode());
-        assertEquals(mon1.hashCode(), mon2.hashCode());
-        assertNotEquals(mon1.hashCode(), mon3.hashCode());
-    }
+  @Test
+  public void testMonthHashCode() {
+    Month mon1 = new Month(22);
+    Month mon2 = new Month(22);
+    Month mon3 = new Month(1);
+    assertEquals(mon1.hashCode(), mon1.hashCode());
+    assertEquals(mon1.hashCode(), mon2.hashCode());
+    assertNotEquals(mon1.hashCode(), mon3.hashCode());
+  }
 
-    @Test
-    public void testMonthCompareTo() {
-        Month mon1 = new Month(22);
-        Month mon2 = new Month(22);
-        Month mon3 = new Month(1);
-        assertEquals(0, mon1.compareTo(mon1));
-        assertEquals(0, mon1.compareTo(mon2));
-        assertEquals(21, mon1.compareTo(mon3));
-    }
+  @Test
+  public void testMonthCompareTo() {
+    Month mon1 = new Month(22);
+    Month mon2 = new Month(22);
+    Month mon3 = new Month(1);
+    assertEquals(0, mon1.compareTo(mon1));
+    assertEquals(0, mon1.compareTo(mon2));
+    assertEquals(21, mon1.compareTo(mon3));
+  }
 }

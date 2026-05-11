@@ -358,11 +358,11 @@ public class SerDesTest {
     final Dict input = new Dict(x, y);
 
     try {
-      kdbProtocol.serialise(input, buffer);
+      kdbProtocol.serialize(input, buffer);
 
       buffer.position(0);
 
-      final Dict actual = (Dict) kdbProtocol.deserialiseResponseMessage(buffer);
+      final Dict actual = (Dict) kdbProtocol.deserializeResponseMessage(buffer);
       assertArrayEquals((String[]) input.x, (String[]) actual.x);
       assertArrayEquals((String[]) input.y, (String[]) actual.y);
     } catch (UnsupportedEncodingException | KdbException e) {
@@ -377,11 +377,11 @@ public class SerDesTest {
     final Flip input = new Flip(new Dict(x, y));
 
     try {
-      kdbProtocol.serialise(input, buffer);
+      kdbProtocol.serialize(input, buffer);
 
       buffer.position(0);
 
-      final Flip actual = (Flip) kdbProtocol.deserialiseResponseMessage(buffer);
+      final Flip actual = (Flip) kdbProtocol.deserializeResponseMessage(buffer);
       assertArrayEquals(input.columns, actual.columns);
       assertArrayEquals(input.columnNames, actual.columnNames);
     } catch (UnsupportedEncodingException | KdbException e) {
@@ -542,11 +542,11 @@ public class SerDesTest {
 
   private void assertSerDesAtom(final Object data) {
     try {
-      kdbProtocol.serialise(data, buffer);
+      kdbProtocol.serialize(data, buffer);
 
       buffer.position(0);
 
-      assertEquals(data, kdbProtocol.deserialiseResponseMessage(buffer));
+      assertEquals(data, kdbProtocol.deserializeResponseMessage(buffer));
     } catch (UnsupportedEncodingException | KdbException e) {
       fail(e);
     }
@@ -554,11 +554,11 @@ public class SerDesTest {
 
   private void assertSerDesArray(final Object[] data) {
     try {
-      kdbProtocol.serialise(data, buffer);
+      kdbProtocol.serialize(data, buffer);
 
       buffer.position(0);
 
-      assertArrayEquals(data, (Object[]) kdbProtocol.deserialiseResponseMessage(buffer));
+      assertArrayEquals(data, (Object[]) kdbProtocol.deserializeResponseMessage(buffer));
     } catch (UnsupportedEncodingException | KdbException e) {
       fail(e);
     }
@@ -566,11 +566,11 @@ public class SerDesTest {
 
   private void assertSerDesArray(final boolean[] data) {
     try {
-      kdbProtocol.serialise(data, buffer);
+      kdbProtocol.serialize(data, buffer);
 
       buffer.position(0);
 
-      assertArrayEquals(data, (boolean[]) kdbProtocol.deserialiseResponseMessage(buffer));
+      assertArrayEquals(data, (boolean[]) kdbProtocol.deserializeResponseMessage(buffer));
     } catch (UnsupportedEncodingException | KdbException e) {
       fail(e);
     }
@@ -578,11 +578,11 @@ public class SerDesTest {
 
   private void assertSerDesArray(final byte[] data) {
     try {
-      kdbProtocol.serialise(data, buffer);
+      kdbProtocol.serialize(data, buffer);
 
       buffer.position(0);
 
-      assertArrayEquals(data, (byte[]) kdbProtocol.deserialiseResponseMessage(buffer));
+      assertArrayEquals(data, (byte[]) kdbProtocol.deserializeResponseMessage(buffer));
     } catch (UnsupportedEncodingException | KdbException e) {
       fail(e);
     }
@@ -590,11 +590,11 @@ public class SerDesTest {
 
   private void assertSerDesArray(final short[] data) {
     try {
-      kdbProtocol.serialise(data, buffer);
+      kdbProtocol.serialize(data, buffer);
 
       buffer.position(0);
 
-      assertArrayEquals(data, (short[]) kdbProtocol.deserialiseResponseMessage(buffer));
+      assertArrayEquals(data, (short[]) kdbProtocol.deserializeResponseMessage(buffer));
     } catch (UnsupportedEncodingException | KdbException e) {
       fail(e);
     }
@@ -602,11 +602,11 @@ public class SerDesTest {
 
   private void assertSerDesArray(final int[] data) {
     try {
-      kdbProtocol.serialise(data, buffer);
+      kdbProtocol.serialize(data, buffer);
 
       buffer.position(0);
 
-      assertArrayEquals(data, (int[]) kdbProtocol.deserialiseResponseMessage(buffer));
+      assertArrayEquals(data, (int[]) kdbProtocol.deserializeResponseMessage(buffer));
     } catch (UnsupportedEncodingException | KdbException e) {
       fail(e);
     }
@@ -614,11 +614,11 @@ public class SerDesTest {
 
   private void assertSerDesArray(final long[] data) {
     try {
-      kdbProtocol.serialise(data, buffer);
+      kdbProtocol.serialize(data, buffer);
 
       buffer.position(0);
 
-      assertArrayEquals(data, (long[]) kdbProtocol.deserialiseResponseMessage(buffer));
+      assertArrayEquals(data, (long[]) kdbProtocol.deserializeResponseMessage(buffer));
     } catch (UnsupportedEncodingException | KdbException e) {
       fail(e);
     }
@@ -626,11 +626,11 @@ public class SerDesTest {
 
   private void assertSerDesArray(final float[] data) {
     try {
-      kdbProtocol.serialise(data, buffer);
+      kdbProtocol.serialize(data, buffer);
 
       buffer.position(0);
 
-      assertArrayEquals(data, (float[]) kdbProtocol.deserialiseResponseMessage(buffer));
+      assertArrayEquals(data, (float[]) kdbProtocol.deserializeResponseMessage(buffer));
     } catch (UnsupportedEncodingException | KdbException e) {
       fail(e);
     }
@@ -638,11 +638,11 @@ public class SerDesTest {
 
   private void assertSerDesArray(final double[] data) {
     try {
-      kdbProtocol.serialise(data, buffer);
+      kdbProtocol.serialize(data, buffer);
 
       buffer.position(0);
 
-      assertArrayEquals(data, (double[]) kdbProtocol.deserialiseResponseMessage(buffer));
+      assertArrayEquals(data, (double[]) kdbProtocol.deserializeResponseMessage(buffer));
     } catch (UnsupportedEncodingException | KdbException e) {
       fail(e);
     }
@@ -650,11 +650,11 @@ public class SerDesTest {
 
   private void assertSerDesArray(final char[] data) {
     try {
-      kdbProtocol.serialise(data, buffer);
+      kdbProtocol.serialize(data, buffer);
 
       buffer.position(0);
 
-      assertArrayEquals(data, (char[]) kdbProtocol.deserialiseResponseMessage(buffer));
+      assertArrayEquals(data, (char[]) kdbProtocol.deserializeResponseMessage(buffer));
     } catch (UnsupportedEncodingException | KdbException e) {
       fail(e);
     }

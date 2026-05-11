@@ -72,12 +72,12 @@ public class KdbProtocol {
    * Serialize and write the data to the registered connection
    *
    * @param msgType type of the ipc message
-   * @param msg object to serialise
+   * @param msg object to serialize
    * @param kdbMessageHeader flyweight kdb message header
-   * @param messageBuffer buffer to serialise data into
+   * @param messageBuffer buffer to serialize data into
    * @throws IOException should not throw
    */
-  protected void serialiseMessage(
+  protected void serializeMessage(
       final MessageType msgType,
       final Object msg,
       final KdbMessageHeader kdbMessageHeader,
@@ -93,7 +93,7 @@ public class KdbProtocol {
         .setMessageSize(length);
 
     messageBuffer.position(KdbMessageHeader.SIZE);
-    serialise(msg, messageBuffer);
+    serialize(msg, messageBuffer);
     if (allowCompression && messageBuffer.position() > 2000) {
       throw new UnsupportedEncodingException("Not yet implemented compression");
       //            kdbMessageHeader.setIsCompressed(true);
@@ -111,7 +111,7 @@ public class KdbProtocol {
       throw new UnsupportedEncodingException("Not yet implemented compression");
       //            uncompress();
     }
-    return deserialiseResponseMessage(messageBuffer); // deserialize the message
+    return deserializeResponseMessage(messageBuffer);
   }
 
   /**
@@ -135,76 +135,76 @@ public class KdbProtocol {
    * Serialize object in big endian format
    *
    * @param obj Object to serialize
-   * @param messageBuffer buffer to serialise to
+   * @param messageBuffer buffer to serialize to
    * @throws UnsupportedEncodingException If the named charset (encoding) is not supported
    */
-  protected void serialise(final Object obj, final ByteBuffer messageBuffer)
+  protected void serialize(final Object obj, final ByteBuffer messageBuffer)
       throws UnsupportedEncodingException, KdbException {
     final DataType type = DataType.getKdbType(obj);
     messageBuffer.put(type.getTypeCode());
     if (type.isAtom()) {
       switch (type) {
         case Boolean:
-          serialise(((Boolean) obj).booleanValue(), messageBuffer);
+          serialize(((Boolean) obj).booleanValue(), messageBuffer);
           return;
         case UUID:
-          serialise((UUID) obj, messageBuffer);
+          serialize((UUID) obj, messageBuffer);
           return;
         case Byte:
-          serialise(((Byte) obj).byteValue(), messageBuffer);
+          serialize(((Byte) obj).byteValue(), messageBuffer);
           return;
         case Short:
-          serialise(((Short) obj).shortValue(), messageBuffer);
+          serialize(((Short) obj).shortValue(), messageBuffer);
           return;
         case Integer:
-          serialise(((Integer) obj).intValue(), messageBuffer);
+          serialize(((Integer) obj).intValue(), messageBuffer);
           return;
         case Long:
-          serialise(((Long) obj).longValue(), messageBuffer);
+          serialize(((Long) obj).longValue(), messageBuffer);
           return;
         case Float:
-          serialise(((Float) obj).floatValue(), messageBuffer);
+          serialize(((Float) obj).floatValue(), messageBuffer);
           return;
         case Double:
-          serialise(((Double) obj).doubleValue(), messageBuffer);
+          serialize(((Double) obj).doubleValue(), messageBuffer);
           return;
         case Character:
-          serialise(((Character) obj).charValue(), messageBuffer);
+          serialize(((Character) obj).charValue(), messageBuffer);
           return;
         case String:
-          serialise((String) obj, messageBuffer);
+          serialize((String) obj, messageBuffer);
           return;
         case Instant:
-          serialise((Instant) obj, messageBuffer);
+          serialize((Instant) obj, messageBuffer);
           return;
         case Month:
-          serialise((Month) obj, messageBuffer);
+          serialize((Month) obj, messageBuffer);
           return;
         case LocalDate:
-          serialise((LocalDate) obj, messageBuffer);
+          serialize((LocalDate) obj, messageBuffer);
           return;
         case LocalDateTime:
-          serialise((LocalDateTime) obj, messageBuffer);
+          serialize((LocalDateTime) obj, messageBuffer);
           return;
         case Timespan:
-          serialise((Timespan) obj, messageBuffer);
+          serialize((Timespan) obj, messageBuffer);
           return;
         case Minute:
-          serialise((Minute) obj, messageBuffer);
+          serialize((Minute) obj, messageBuffer);
           return;
         case Second:
-          serialise((Second) obj, messageBuffer);
+          serialize((Second) obj, messageBuffer);
           return;
         case LocalTime:
-          serialise((LocalTime) obj, messageBuffer);
+          serialize((LocalTime) obj, messageBuffer);
           return;
       }
     }
 
     if (type == DataType.Dict) {
       final Dict r = (Dict) obj;
-      serialise(r.x, messageBuffer);
-      serialise(r.y, messageBuffer);
+      serialize(r.x, messageBuffer);
+      serialize(r.y, messageBuffer);
       return;
     }
 
@@ -212,76 +212,76 @@ public class KdbProtocol {
     if (type == DataType.Flip) {
       final Flip r = (Flip) obj;
       messageBuffer.put(DataType.Dict.getTypeCode());
-      serialise(r.columnNames, messageBuffer);
-      serialise(r.columns, messageBuffer);
+      serialize(r.columnNames, messageBuffer);
+      serialize(r.columns, messageBuffer);
       return;
     }
 
     final int numElements = elementCount(obj);
 
-    serialise(numElements, messageBuffer);
+    serialize(numElements, messageBuffer);
 
     if (type == DataType.CharArray) {
       byte[] b = new String((char[]) obj).getBytes(stringEncoding);
       for (final byte character : b) {
-        serialise(character, messageBuffer);
+        serialize(character, messageBuffer);
       }
     } else {
       for (int idx = 0; idx < numElements; idx++) {
         switch (type) {
           case List:
-            serialise(((Object[]) obj)[idx], messageBuffer);
+            serialize(((Object[]) obj)[idx], messageBuffer);
             break;
           case BooleanArray:
-            serialise(((boolean[]) obj)[idx], messageBuffer);
+            serialize(((boolean[]) obj)[idx], messageBuffer);
             break;
           case UUIDArray:
-            serialise(((UUID[]) obj)[idx], messageBuffer);
+            serialize(((UUID[]) obj)[idx], messageBuffer);
             break;
           case ByteArray:
-            serialise(((byte[]) obj)[idx], messageBuffer);
+            serialize(((byte[]) obj)[idx], messageBuffer);
             break;
           case ShortArray:
-            serialise(((short[]) obj)[idx], messageBuffer);
+            serialize(((short[]) obj)[idx], messageBuffer);
             break;
           case IntArray:
-            serialise(((int[]) obj)[idx], messageBuffer);
+            serialize(((int[]) obj)[idx], messageBuffer);
             break;
           case LongArray:
-            serialise(((long[]) obj)[idx], messageBuffer);
+            serialize(((long[]) obj)[idx], messageBuffer);
             break;
           case FloatArray:
-            serialise(((float[]) obj)[idx], messageBuffer);
+            serialize(((float[]) obj)[idx], messageBuffer);
             break;
           case DoubleArray:
-            serialise(((double[]) obj)[idx], messageBuffer);
+            serialize(((double[]) obj)[idx], messageBuffer);
             break;
           case StringArray:
-            serialise(((String[]) obj)[idx], messageBuffer);
+            serialize(((String[]) obj)[idx], messageBuffer);
             break;
           case InstantArray:
-            serialise(((Instant[]) obj)[idx], messageBuffer);
+            serialize(((Instant[]) obj)[idx], messageBuffer);
             break;
           case MonthArray:
-            serialise(((Month[]) obj)[idx], messageBuffer);
+            serialize(((Month[]) obj)[idx], messageBuffer);
             break;
           case LocalDateArray:
-            serialise(((LocalDate[]) obj)[idx], messageBuffer);
+            serialize(((LocalDate[]) obj)[idx], messageBuffer);
             break;
           case LocalDateTimeArray:
-            serialise(((LocalDateTime[]) obj)[idx], messageBuffer);
+            serialize(((LocalDateTime[]) obj)[idx], messageBuffer);
             break;
           case TimespanArray:
-            serialise(((Timespan[]) obj)[idx], messageBuffer);
+            serialize(((Timespan[]) obj)[idx], messageBuffer);
             break;
           case MinuteArray:
-            serialise(((Minute[]) obj)[idx], messageBuffer);
+            serialize(((Minute[]) obj)[idx], messageBuffer);
             break;
           case SecondArray:
-            serialise(((Second[]) obj)[idx], messageBuffer);
+            serialize(((Second[]) obj)[idx], messageBuffer);
             break;
           case LocalTimeArray:
-            serialise(((LocalTime[]) obj)[idx], messageBuffer);
+            serialize(((LocalTime[]) obj)[idx], messageBuffer);
             break;
           default:
             throw new KdbException("Unhandled type: " + type);
@@ -290,48 +290,48 @@ public class KdbProtocol {
     }
   }
 
-  private void serialise(boolean bool, final ByteBuffer messageBuffer) {
+  private void serialize(boolean bool, final ByteBuffer messageBuffer) {
     messageBuffer.put((byte) (bool ? 1 : 0));
   }
 
-  private void serialise(UUID uuid, final ByteBuffer messageBuffer) {
+  private void serialize(UUID uuid, final ByteBuffer messageBuffer) {
     if (version < 3) {
       throw new RuntimeException("Guid not valid pre kdb+3.0");
     }
 
-    serialise(uuid.getMostSignificantBits(), messageBuffer);
-    serialise(uuid.getLeastSignificantBits(), messageBuffer);
+    serialize(uuid.getMostSignificantBits(), messageBuffer);
+    serialize(uuid.getLeastSignificantBits(), messageBuffer);
   }
 
-  private void serialise(byte b, final ByteBuffer messageBuffer) {
+  private void serialize(byte b, final ByteBuffer messageBuffer) {
     messageBuffer.put(b);
   }
 
-  private void serialise(short s, final ByteBuffer messageBuffer) {
+  private void serialize(short s, final ByteBuffer messageBuffer) {
     messageBuffer.putShort(s);
   }
 
-  private void serialise(int i, final ByteBuffer messageBuffer) {
+  private void serialize(int i, final ByteBuffer messageBuffer) {
     messageBuffer.putInt(i);
   }
 
-  private void serialise(long l, final ByteBuffer messageBuffer) {
+  private void serialize(long l, final ByteBuffer messageBuffer) {
     messageBuffer.putLong(l);
   }
 
-  private void serialise(float f, final ByteBuffer messageBuffer) {
+  private void serialize(float f, final ByteBuffer messageBuffer) {
     messageBuffer.putInt(Float.floatToIntBits(f));
   }
 
-  private void serialise(double d, final ByteBuffer messageBuffer) {
+  private void serialize(double d, final ByteBuffer messageBuffer) {
     messageBuffer.putLong(Double.doubleToLongBits(d));
   }
 
-  private void serialise(char c, final ByteBuffer messageBuffer) {
+  private void serialize(char c, final ByteBuffer messageBuffer) {
     messageBuffer.put((byte) c);
   }
 
-  private void serialise(String s, final ByteBuffer messageBuffer) {
+  private void serialize(String s, final ByteBuffer messageBuffer) {
     if (s != null) {
       byte[] encodedStringChars = s.getBytes(stringEncoding);
       for (int idx = 0;
@@ -343,7 +343,7 @@ public class KdbProtocol {
     messageBuffer.put(NULL_BYTE);
   }
 
-  private void serialise(Instant p, final ByteBuffer messageBuffer) {
+  private void serialize(Instant p, final ByteBuffer messageBuffer) {
     if (version < 1) {
       throw new RuntimeException("Instant not valid pre kdb+2.6");
     }
@@ -353,11 +353,11 @@ public class KdbProtocol {
             : 1000000 * (p.toEpochMilli() - MILLS_BETWEEN_1970_2000) + p.getNano() % 1000000);
   }
 
-  private void serialise(Month m, final ByteBuffer messageBuffer) {
+  private void serialize(Month m, final ByteBuffer messageBuffer) {
     messageBuffer.putInt(m.i);
   }
 
-  private void serialise(LocalDate d, final ByteBuffer messageBuffer) {
+  private void serialize(LocalDate d, final ByteBuffer messageBuffer) {
     if (d == LocalDate.MIN) {
       messageBuffer.putInt(NULL_INT);
       return;
@@ -370,34 +370,34 @@ public class KdbProtocol {
     messageBuffer.putInt((int) (daysSince2000));
   }
 
-  private void serialise(LocalDateTime z, final ByteBuffer messageBuffer) {
+  private void serialize(LocalDateTime z, final ByteBuffer messageBuffer) {
     if (z == LocalDateTime.MIN) {
-      serialise(NULL_FLOAT, messageBuffer);
+      serialize(NULL_FLOAT, messageBuffer);
       return;
     }
 
     long daysSince2000 = z.toLocalDate().toEpochDay() - DAYS_BETWEEN_1970_2000;
     long millisSince2000 =
         daysSince2000 * MILLS_IN_DAY + (z.toLocalTime().toNanoOfDay() / NANOS_IN_MS);
-    serialise(millisSince2000 / (double) MILLS_IN_DAY, messageBuffer);
+    serialize(millisSince2000 / (double) MILLS_IN_DAY, messageBuffer);
   }
 
-  private void serialise(Timespan n, final ByteBuffer messageBuffer) {
+  private void serialize(Timespan n, final ByteBuffer messageBuffer) {
     if (version < 1) {
       throw new RuntimeException("Timespan not valid pre kdb+2.6");
     }
     messageBuffer.putLong(n.j);
   }
 
-  private void serialise(Minute u, final ByteBuffer messageBuffer) {
+  private void serialize(Minute u, final ByteBuffer messageBuffer) {
     messageBuffer.putInt(u.i);
   }
 
-  private void serialise(Second v, final ByteBuffer messageBuffer) {
+  private void serialize(Second v, final ByteBuffer messageBuffer) {
     messageBuffer.putInt(v.i);
   }
 
-  private void serialise(LocalTime t, final ByteBuffer messageBuffer) {
+  private void serialize(LocalTime t, final ByteBuffer messageBuffer) {
     messageBuffer.putInt((t == NULL_LOCAL_TIME) ? NULL_INT : (int) (t.toNanoOfDay() / NANOS_IN_MS));
   }
 
@@ -423,9 +423,9 @@ public class KdbProtocol {
   /**
    * Deserializes the contents of the incoming message buffer
    *
-   * @param messageBuffer incoming message buffer private @return deserialised object
+   * @param messageBuffer incoming message buffer private @return deserialized object
    */
-  protected Object deserialiseResponseMessage(final ByteBuffer messageBuffer)
+  protected Object deserializeResponseMessage(final ByteBuffer messageBuffer)
       throws UnsupportedEncodingException, KdbException {
     int i = 0;
     int n;
@@ -433,83 +433,83 @@ public class KdbProtocol {
     if (type.isAtom())
       switch (type) {
         case Boolean:
-          return deserialiseBoolean(messageBuffer);
+          return deserializeBoolean(messageBuffer);
         case UUID:
-          return deserialiseUuid(messageBuffer);
+          return deserializeUuid(messageBuffer);
         case Byte:
           return messageBuffer.get();
         case Short:
-          return deserialiseShort(messageBuffer);
+          return deserializeShort(messageBuffer);
         case Integer:
           return messageBuffer.getInt();
         case Long:
-          return deserialiseLong(messageBuffer);
+          return deserializeLong(messageBuffer);
         case Float:
-          return deserialiseFloat(messageBuffer);
+          return deserializeFloat(messageBuffer);
         case Double:
-          return deserialiseDouble(messageBuffer);
+          return deserializeDouble(messageBuffer);
         case Character:
-          return deserialiseChar(messageBuffer);
+          return deserializeChar(messageBuffer);
         case String:
           return deserializeString(messageBuffer);
         case Instant:
-          return deserialiseInstant(messageBuffer);
+          return deserializeInstant(messageBuffer);
         case Month:
-          return deserialiseMonth(messageBuffer);
+          return deserializeMonth(messageBuffer);
         case LocalDate:
-          return deserialiseLocalDate(messageBuffer);
+          return deserializeLocalDate(messageBuffer);
         case LocalDateTime:
-          return deserialiseLocalDateTime(messageBuffer);
+          return deserializeLocalDateTime(messageBuffer);
         case Timespan:
-          return deserialiseTimespan(messageBuffer);
+          return deserializeTimespan(messageBuffer);
         case Minute:
-          return deserialiseMinute(messageBuffer);
+          return deserializeMinute(messageBuffer);
         case Second:
-          return deserialiseSecond(messageBuffer);
+          return deserializeSecond(messageBuffer);
         case LocalTime:
-          return deserialiseLocalTime(messageBuffer);
+          return deserializeLocalTime(messageBuffer);
         case Exception:
           throw new KdbException(deserializeString(messageBuffer));
       }
     if (type.getTypeCode() > 99) {
       if (type == Lambda) {
         deserializeString(messageBuffer);
-        return deserialiseResponseMessage(messageBuffer);
+        return deserializeResponseMessage(messageBuffer);
       }
       if (type.getTypeCode() < 104) {
         return messageBuffer.get() == 0 && type.getTypeCode() == 101 ? null : "func";
       }
       if (type.getTypeCode() > 105) {
-        deserialiseResponseMessage(messageBuffer);
+        deserializeResponseMessage(messageBuffer);
       } else {
         for (n = messageBuffer.getInt(); i < n; i++) {
-          deserialiseResponseMessage(messageBuffer);
+          deserializeResponseMessage(messageBuffer);
         }
       }
       return "func";
     }
     if (type == DataType.Dict)
       return new Dict(
-          deserialiseResponseMessage(messageBuffer), deserialiseResponseMessage(messageBuffer));
+          deserializeResponseMessage(messageBuffer), deserializeResponseMessage(messageBuffer));
 
     messageBuffer.get();
 
     if (type == DataType.Flip) {
-      return new Flip((Dict) deserialiseResponseMessage(messageBuffer));
+      return new Flip((Dict) deserializeResponseMessage(messageBuffer));
     }
     n = messageBuffer.getInt();
     switch (type) {
       case List:
         Object[] objArr = new Object[n];
-        for (; i < n; i++) objArr[i] = deserialiseResponseMessage(messageBuffer);
+        for (; i < n; i++) objArr[i] = deserializeResponseMessage(messageBuffer);
         return objArr;
       case BooleanArray:
         boolean[] boolArr = new boolean[n];
-        for (; i < n; i++) boolArr[i] = deserialiseBoolean(messageBuffer);
+        for (; i < n; i++) boolArr[i] = deserializeBoolean(messageBuffer);
         return boolArr;
       case UUIDArray:
         UUID[] uuidArr = new UUID[n];
-        for (; i < n; i++) uuidArr[i] = deserialiseUuid(messageBuffer);
+        for (; i < n; i++) uuidArr[i] = deserializeUuid(messageBuffer);
         return uuidArr;
       case ByteArray:
         byte[] byteArr = new byte[n];
@@ -517,7 +517,7 @@ public class KdbProtocol {
         return byteArr;
       case ShortArray:
         short[] shortArr = new short[n];
-        for (; i < n; i++) shortArr[i] = deserialiseShort(messageBuffer);
+        for (; i < n; i++) shortArr[i] = deserializeShort(messageBuffer);
         return shortArr;
       case IntArray:
         int[] intArr = new int[n];
@@ -525,15 +525,15 @@ public class KdbProtocol {
         return intArr;
       case LongArray:
         long[] longArr = new long[n];
-        for (; i < n; i++) longArr[i] = deserialiseLong(messageBuffer);
+        for (; i < n; i++) longArr[i] = deserializeLong(messageBuffer);
         return longArr;
       case FloatArray:
         float[] floatArr = new float[n];
-        for (; i < n; i++) floatArr[i] = deserialiseFloat(messageBuffer);
+        for (; i < n; i++) floatArr[i] = deserializeFloat(messageBuffer);
         return floatArr;
       case DoubleArray:
         double[] doubleArr = new double[n];
-        for (; i < n; i++) doubleArr[i] = deserialiseDouble(messageBuffer);
+        for (; i < n; i++) doubleArr[i] = deserializeDouble(messageBuffer);
         return doubleArr;
       case CharArray:
         char[] charArr =
@@ -549,35 +549,35 @@ public class KdbProtocol {
         return stringArr;
       case InstantArray:
         Instant[] timestampArr = new Instant[n];
-        for (; i < n; i++) timestampArr[i] = deserialiseInstant(messageBuffer);
+        for (; i < n; i++) timestampArr[i] = deserializeInstant(messageBuffer);
         return timestampArr;
       case MonthArray:
         Month[] monthArr = new Month[n];
-        for (; i < n; i++) monthArr[i] = deserialiseMonth(messageBuffer);
+        for (; i < n; i++) monthArr[i] = deserializeMonth(messageBuffer);
         return monthArr;
       case LocalDateArray:
         LocalDate[] dateArr = new LocalDate[n];
-        for (; i < n; i++) dateArr[i] = deserialiseLocalDate(messageBuffer);
+        for (; i < n; i++) dateArr[i] = deserializeLocalDate(messageBuffer);
         return dateArr;
       case LocalDateTimeArray:
         LocalDateTime[] dateUtilArr = new LocalDateTime[n];
-        for (; i < n; i++) dateUtilArr[i] = deserialiseLocalDateTime(messageBuffer);
+        for (; i < n; i++) dateUtilArr[i] = deserializeLocalDateTime(messageBuffer);
         return dateUtilArr;
       case TimespanArray:
         Timespan[] timespanArr = new Timespan[n];
-        for (; i < n; i++) timespanArr[i] = deserialiseTimespan(messageBuffer);
+        for (; i < n; i++) timespanArr[i] = deserializeTimespan(messageBuffer);
         return timespanArr;
       case MinuteArray:
         Minute[] minArr = new Minute[n];
-        for (; i < n; i++) minArr[i] = deserialiseMinute(messageBuffer);
+        for (; i < n; i++) minArr[i] = deserializeMinute(messageBuffer);
         return minArr;
       case SecondArray:
         Second[] secArr = new Second[n];
-        for (; i < n; i++) secArr[i] = deserialiseSecond(messageBuffer);
+        for (; i < n; i++) secArr[i] = deserializeSecond(messageBuffer);
         return secArr;
       case LocalTimeArray:
         LocalTime[] timeArr = new LocalTime[n];
-        for (; i < n; i++) timeArr[i] = deserialiseLocalTime(messageBuffer);
+        for (; i < n; i++) timeArr[i] = deserializeLocalTime(messageBuffer);
         return timeArr;
       default:
         // do nothing, let it return null
@@ -590,7 +590,7 @@ public class KdbProtocol {
    *
    * @return Deserialized char
    */
-  private char deserialiseChar(final ByteBuffer messageBuffer) {
+  private char deserializeChar(final ByteBuffer messageBuffer) {
     return (char) (messageBuffer.get() & 0xff);
   }
 
@@ -599,7 +599,7 @@ public class KdbProtocol {
    *
    * @return Deserialized boolean
    */
-  private boolean deserialiseBoolean(final ByteBuffer messageBuffer) {
+  private boolean deserializeBoolean(final ByteBuffer messageBuffer) {
     return 1 == messageBuffer.get();
   }
 
@@ -608,7 +608,7 @@ public class KdbProtocol {
    *
    * @return Deserialized short
    */
-  private short deserialiseShort(final ByteBuffer messageBuffer) {
+  private short deserializeShort(final ByteBuffer messageBuffer) {
     return messageBuffer.getShort();
   }
 
@@ -617,7 +617,7 @@ public class KdbProtocol {
    *
    * @return Deserialized UUID
    */
-  private UUID deserialiseUuid(final ByteBuffer messageBuffer) {
+  private UUID deserializeUuid(final ByteBuffer messageBuffer) {
     final ByteOrder originalOrder = messageBuffer.order();
 
     messageBuffer.order(ByteOrder.BIG_ENDIAN);
@@ -632,7 +632,7 @@ public class KdbProtocol {
    *
    * @return Deserialized long
    */
-  private long deserialiseLong(final ByteBuffer messageBuffer) {
+  private long deserializeLong(final ByteBuffer messageBuffer) {
     return messageBuffer.getLong();
   }
 
@@ -641,7 +641,7 @@ public class KdbProtocol {
    *
    * @return Deserialized float
    */
-  private float deserialiseFloat(final ByteBuffer messageBuffer) {
+  private float deserializeFloat(final ByteBuffer messageBuffer) {
     return Float.intBitsToFloat(messageBuffer.getInt());
   }
 
@@ -650,7 +650,7 @@ public class KdbProtocol {
    *
    * @return Deserialized double
    */
-  private double deserialiseDouble(final ByteBuffer messageBuffer) {
+  private double deserializeDouble(final ByteBuffer messageBuffer) {
     return Double.longBitsToDouble(messageBuffer.getLong());
   }
 
@@ -659,7 +659,7 @@ public class KdbProtocol {
    *
    * @return Deserialized Month
    */
-  private Month deserialiseMonth(final ByteBuffer messageBuffer) {
+  private Month deserializeMonth(final ByteBuffer messageBuffer) {
     return new Month(messageBuffer.getInt());
   }
 
@@ -668,7 +668,7 @@ public class KdbProtocol {
    *
    * @return Deserialized Minute
    */
-  private Minute deserialiseMinute(final ByteBuffer messageBuffer) {
+  private Minute deserializeMinute(final ByteBuffer messageBuffer) {
     return new Minute(messageBuffer.getInt());
   }
 
@@ -677,7 +677,7 @@ public class KdbProtocol {
    *
    * @return Deserialized Second
    */
-  private Second deserialiseSecond(final ByteBuffer messageBuffer) {
+  private Second deserializeSecond(final ByteBuffer messageBuffer) {
     return new Second(messageBuffer.getInt());
   }
 
@@ -686,7 +686,7 @@ public class KdbProtocol {
    *
    * @return Deserialized Timespan
    */
-  private Timespan deserialiseTimespan(final ByteBuffer messageBuffer) {
+  private Timespan deserializeTimespan(final ByteBuffer messageBuffer) {
     return new Timespan(messageBuffer.getLong());
   }
 
@@ -695,7 +695,7 @@ public class KdbProtocol {
    *
    * @return Deserialized date
    */
-  private LocalDate deserialiseLocalDate(final ByteBuffer messageBuffer) {
+  private LocalDate deserializeLocalDate(final ByteBuffer messageBuffer) {
     final int dateAsInt = messageBuffer.getInt();
     return (dateAsInt == NULL_INT
         ? LocalDate.MIN
@@ -707,7 +707,7 @@ public class KdbProtocol {
    *
    * @return Deserialized time
    */
-  private LocalTime deserialiseLocalTime(final ByteBuffer messageBuffer) {
+  private LocalTime deserializeLocalTime(final ByteBuffer messageBuffer) {
     final int timeAsInt = messageBuffer.getInt();
 
     return (timeAsInt == NULL_INT
@@ -720,8 +720,8 @@ public class KdbProtocol {
    *
    * @return Deserialized date
    */
-  private LocalDateTime deserialiseLocalDateTime(final ByteBuffer messageBuffer) {
-    final double f = deserialiseDouble(messageBuffer);
+  private LocalDateTime deserializeLocalDateTime(final ByteBuffer messageBuffer) {
+    final double f = deserializeDouble(messageBuffer);
     if (Double.isNaN(f)) {
       return LocalDateTime.MIN;
     }
@@ -736,7 +736,7 @@ public class KdbProtocol {
    *
    * @return Deserialized timestamp
    */
-  private Instant deserialiseInstant(final ByteBuffer messageBuffer) {
+  private Instant deserializeInstant(final ByteBuffer messageBuffer) {
     final long timeAsLong = messageBuffer.getLong();
     if (timeAsLong == NULL_LONG) {
       return Instant.MIN;
@@ -751,7 +751,7 @@ public class KdbProtocol {
    * the supplied string.
    *
    * @param string String to be serialized
-   * @return number of bytes required to serialise a string
+   * @return number of bytes required to serialize a string
    * @throws UnsupportedEncodingException If the named charset is not supported
    */
   protected int lengthOfEncodedString(final String string) throws UnsupportedEncodingException {
@@ -775,7 +775,7 @@ public class KdbProtocol {
    * Calculates the number of bytes which would be required to serialize the supplied object.
    *
    * @param obj Object to be serialized
-   * @return number of bytes required to serialise an object.
+   * @return number of bytes required to serialize an object.
    * @throws UnsupportedEncodingException If the named charset is not supported
    */
   protected int lengthOfObject(final Object obj) throws UnsupportedEncodingException {

@@ -64,7 +64,7 @@ public class KdbClient implements AutoCloseable {
    * @param username Username for remote authorization
    * @param password Password for remote authorization
    * @param allowCompression consider compression on outgoing messages (given uncompressed
-   *     serialised data also has a length greater than 2000 bytes and connection is not localhost)
+   *     serialized data also has a length greater than 2000 bytes and connection is not localhost)
    * @param stringEncoding character encoding to use when [de]-serialising strings
    * @param bufferSize size of the data buffer
    * @throws KdbException if access denied
@@ -101,7 +101,7 @@ public class KdbClient implements AutoCloseable {
    * corresponding response message.
    *
    * @param expr The expression to send
-   * @return deserialised response to request {@code x}
+   * @return deserialized response to request {@code x}
    * @throws KdbException if request evaluation resulted in an error
    * @throws IOException if an I/O error occurs.
    */
@@ -121,7 +121,7 @@ public class KdbClient implements AutoCloseable {
    * message by calling readMsg();
    *
    * @param x The object to send
-   * @return deserialised response to request {@code x}
+   * @return deserialized response to request {@code x}
    * @throws KdbException if request evaluation resulted in an error
    * @throws IOException if an I/O error occurs.
    */
@@ -141,7 +141,7 @@ public class KdbClient implements AutoCloseable {
 
   private void sendSyncMessage(final Object x) throws IOException, KdbException {
     resetBuffer();
-    kdbProtocol.serialiseMessage(MessageType.sync, x, kdbMessageHeader, messageBuffer);
+    kdbProtocol.serializeMessage(MessageType.sync, x, kdbMessageHeader, messageBuffer);
     sendToKdb();
   }
 

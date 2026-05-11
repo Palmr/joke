@@ -79,13 +79,14 @@ class DataTypeTest {
   void testTypeByteSize() {
     final int[] bytesPerTypeId = {0, 1, 16, 0, 1, 2, 4, 8, 4, 8, 1, 0, 8, 4, 4, 8, 8, 4, 4, 4};
     for (int typeId = 0; typeId < bytesPerTypeId.length; typeId++) {
-      final var kdbType = DataType.getKdbType((byte) typeId);
-      if (kdbType != null) {
-        assertEquals(
-            bytesPerTypeId[typeId],
-            kdbType.getAtomicByteSize(),
-            "Byte size mismatch for type: " + kdbType);
+      if (typeId == 3) {
+        continue; // type code 3 is a gap in the KDB+ type table
       }
+      final var kdbType = DataType.getKdbType((byte) typeId);
+      assertEquals(
+          bytesPerTypeId[typeId],
+          kdbType.getAtomicByteSize(),
+          "Byte size mismatch for type: " + kdbType);
     }
   }
 }

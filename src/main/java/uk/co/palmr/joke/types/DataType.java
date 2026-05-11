@@ -201,7 +201,11 @@ public enum DataType {
   }
 
   public static DataType getKdbType(final byte typeCode) {
-    return typeCodeLookup.get(typeCode);
+    final DataType type = typeCodeLookup.get(typeCode);
+    if (type == null) {
+      throw new IllegalArgumentException("Unsupported KDB+ type code: " + typeCode);
+    }
+    return type;
   }
 
   public byte getTypeCode() {

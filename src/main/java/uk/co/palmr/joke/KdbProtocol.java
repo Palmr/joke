@@ -410,9 +410,7 @@ public class KdbProtocol {
   private String deserializeString(final ByteBuffer messageBuffer)
       throws UnsupportedEncodingException {
     final var startPos = messageBuffer.position();
-    while (messageBuffer.get() != NULL_BYTE) {
-      Thread.onSpinWait();
-    }
+    while (messageBuffer.get() != NULL_BYTE) {}
     final var endPos = messageBuffer.position();
     final var stringBytes = new byte[endPos - startPos - 1];
     messageBuffer.get(startPos, stringBytes);

@@ -50,21 +50,23 @@ public class KdbProtocol {
      */
     protected static final LocalTime NULL_LOCAL_TIME = LocalTime.ofNanoOfDay(1);
 
-    protected static final int DAYS_BETWEEN_1970_2000 = 10957;
-    protected static final long MILLS_IN_DAY = 86400000L;
+    protected static final int DAYS_BETWEEN_1970_2000 = 10_957;
+    protected static final long SECONDS_BETWEEN_1970_2000 = 946_684_800L;
+    protected static final long MILLS_IN_DAY = 86_400_000L;
     protected static final long MILLS_BETWEEN_1970_2000 = MILLS_IN_DAY * DAYS_BETWEEN_1970_2000;
-    protected static final long NANOS_IN_SEC = 1000000000L;
+    protected static final long NANOS_IN_SEC = 1_000_000_000L;
+    protected static final long NANOS_IN_MS = NANOS_IN_SEC / 1_000;
 
     /**
      * The character encoding to use when [de]-serializing strings.
      */
-    private final String stringEncoding;
+    private final Charset stringEncoding;
 
     private final boolean allowCompression;
 
     private int version = IpcVersion.KDB_IPC_VERSION;
 
-    protected KdbProtocol(final String stringEncoding, final boolean allowCompression) {
+    protected KdbProtocol(final Charset stringEncoding, final boolean allowCompression) {
         this.stringEncoding = stringEncoding;
         this.allowCompression = allowCompression;
     }
@@ -329,7 +331,7 @@ public class KdbProtocol {
         messageBuffer.put((byte) c);
     }
 
-    private void serialise(String s, final ByteBuffer messageBuffer) throws UnsupportedEncodingException {
+    private void serialise(String s, final ByteBuffer messageBuffer) {
         if (s != null) {
             byte[] encodedStringChars = s.getBytes(stringEncoding);
             for (int idx = 0; idx < encodedStringChars.length && encodedStringChars[idx] != NULL_BYTE; idx++) {
@@ -365,10 +367,14 @@ public class KdbProtocol {
     }
 
     private void serialise(LocalDateTime z, final ByteBuffer messageBuffer) {
-        serialise(z == LocalDateTime.MIN
-                        ? NULL_FLOAT
-                        : (z.toInstant(UTC).toEpochMilli() - MILLS_BETWEEN_1970_2000) / 8.64e7,
-                messageBuffer);
+        if (z == LocalDateTime.MIN){
+            serialise(NULL_FLOAT, messageBuffer);
+            return;
+        }
+
+        long daysSince2000 = z.toLocalDate().toEpochDay() - DAYS_BETWEEN_1970_2000;
+        long millisSince2000 = daysSince2000 * MILLS_IN_DAY + (z.toLocalTime().toNanoOfDay() / NANOS_IN_MS);
+        serialise(millisSince2000 / (double)MILLS_IN_DAY, messageBuffer);
     }
 
     private void serialise(Timespan n, final ByteBuffer messageBuffer) {
@@ -388,8 +394,8 @@ public class KdbProtocol {
 
     private void serialise(LocalTime t, final ByteBuffer messageBuffer) {
         messageBuffer.putInt((t == NULL_LOCAL_TIME)
-                ? NULL_INT
-                : (int) ((t.toSecondOfDay() * 1000 + t.getNano() / 1000000) % MILLS_IN_DAY));
+                             ? NULL_INT
+                             : (int)(t.toNanoOfDay() / NANOS_IN_MS));
     }
 
     /**
@@ -538,7 +544,7 @@ public class KdbProtocol {
                     doubleArr[i] = deserialiseDouble(messageBuffer);
                 return doubleArr;
             case CharArray:
-                char[] charArr = Charset.forName(stringEncoding).decode(messageBuffer.slice(messageBuffer.position(), n)).toString().toCharArray();
+                char[] charArr = stringEncoding.decode(messageBuffer.slice(messageBuffer.position(), n)).toString().toCharArray();
                 messageBuffer.position(messageBuffer.position() + n);
                 return charArr;
             case StringArray:
@@ -716,9 +722,10 @@ public class KdbProtocol {
      */
     private LocalTime deserialiseLocalTime(final ByteBuffer messageBuffer) {
         final int timeAsInt = messageBuffer.getInt();
+
         return (timeAsInt == NULL_INT
                 ? NULL_LOCAL_TIME
-                : LocalDateTime.ofInstant(Instant.ofEpochMilli(timeAsInt), UTC).toLocalTime());
+                : LocalTime.ofNanoOfDay(timeAsInt * NANOS_IN_MS));
     }
 
     /**
@@ -731,7 +738,10 @@ public class KdbProtocol {
         if (Double.isNaN(f)) {
             return LocalDateTime.MIN;
         }
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(MILLS_BETWEEN_1970_2000 + Math.round(8.64e7 * f)), UTC);
+        final long millisSince2000 = Math.round(MILLS_IN_DAY * f);
+        final long epochSecond = SECONDS_BETWEEN_1970_2000 + Math.floorDiv(millisSince2000, 1000L);
+        final long nano = Math.floorMod(millisSince2000, 1000L) * NANOS_IN_MS;
+        return LocalDateTime.ofEpochSecond(epochSecond, (int)nano, UTC);
     }
 
     /**

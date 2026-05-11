@@ -22,6 +22,7 @@ import uk.co.palmr.joke.types.*;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,7 +40,7 @@ public class SerDesTest {
 
     @BeforeEach
     void setUp() {
-        kdbProtocol = new KdbProtocol("ISO-8859-1", false);
+        kdbProtocol = new KdbProtocol(StandardCharsets.ISO_8859_1, false);
         buffer = ByteBuffer.allocate(128);
     }
 

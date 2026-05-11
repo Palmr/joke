@@ -24,6 +24,8 @@ import java.net.InetSocketAddress;
 import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +33,7 @@ import static uk.co.palmr.joke.IpcVersion.KDB_IPC_VERSION;
 
 
 public class KdbClient implements AutoCloseable {
-    private static final String DEFAULT_STRING_ENCODING = "ISO-8859-1";
+    private static final Charset DEFAULT_STRING_ENCODING = StandardCharsets.ISO_8859_1;
     public static final int DEFAULT_BUFFER_SIZE = 4096;
 
     private final SocketChannel socketChannel;
@@ -69,7 +71,7 @@ public class KdbClient implements AutoCloseable {
      * @throws IOException  if an I/O error occurs.
      * @see <a href="https://code.kx.com/q/ref/ipc/#compression">IPC compression</a>
      */
-    public KdbClient(final String hostname, final int port, final String username, final String password, final boolean allowCompression, final String stringEncoding, final int bufferSize) throws IOException, KdbException {
+    public KdbClient(final String hostname, final int port, final String username, final String password, final boolean allowCompression, final Charset stringEncoding, final int bufferSize) throws IOException, KdbException {
         this.messageBuffer = ByteBuffer.allocate(bufferSize);
         this.authenticateResponse = new AuthenticateResponse(messageBuffer);
         this.kdbMessageHeader = new KdbMessageHeader(messageBuffer);

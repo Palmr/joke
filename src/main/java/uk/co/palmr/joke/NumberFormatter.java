@@ -13,8 +13,6 @@
  */
 package uk.co.palmr.joke;
 
-import java.text.DecimalFormat;
-
 public class NumberFormatter {
   /**
    * Creates a string from int with left padding of 0s, if less than 2 digits
@@ -23,7 +21,7 @@ public class NumberFormatter {
    * @return String representation of int with zero padding
    */
   public static String i2(int i) {
-    return new DecimalFormat("00").format(i);
+    return String.format("%02d", i);
   }
 
   /**
@@ -33,6 +31,6 @@ public class NumberFormatter {
    * @return String representation of int with zero padding
    */
   public static String i9(int i) {
-    return new DecimalFormat("000000000").format(i);
+    return String.format("%09d", i);
   }
 }

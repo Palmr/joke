@@ -233,47 +233,81 @@ public class KdbProtocol {
       messageBuffer.asDoubleBuffer().put((double[]) obj);
       messageBuffer.position(messageBuffer.position() + numElements * Double.BYTES);
     } else {
-      for (int idx = 0; idx < numElements; idx++) {
-        switch (type) {
-          case List:
-            serialize(((Object[]) obj)[idx], messageBuffer);
+      switch (type) {
+        case List:
+          {
+            Object[] arr = (Object[]) obj;
+            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
             break;
-          case BooleanArray:
-            serialize(((boolean[]) obj)[idx], messageBuffer);
+          }
+        case BooleanArray:
+          {
+            boolean[] arr = (boolean[]) obj;
+            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
             break;
-          case UUIDArray:
-            serialize(((UUID[]) obj)[idx], messageBuffer);
+          }
+        case UUIDArray:
+          {
+            UUID[] arr = (UUID[]) obj;
+            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
             break;
-          case StringArray:
-            serialize(((String[]) obj)[idx], messageBuffer);
+          }
+        case StringArray:
+          {
+            String[] arr = (String[]) obj;
+            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
             break;
-          case InstantArray:
-            serialize(((Instant[]) obj)[idx], messageBuffer);
+          }
+        case InstantArray:
+          {
+            Instant[] arr = (Instant[]) obj;
+            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
             break;
-          case MonthArray:
-            serialize(((Month[]) obj)[idx], messageBuffer);
+          }
+        case MonthArray:
+          {
+            Month[] arr = (Month[]) obj;
+            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
             break;
-          case LocalDateArray:
-            serialize(((LocalDate[]) obj)[idx], messageBuffer);
+          }
+        case LocalDateArray:
+          {
+            LocalDate[] arr = (LocalDate[]) obj;
+            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
             break;
-          case LocalDateTimeArray:
-            serialize(((LocalDateTime[]) obj)[idx], messageBuffer);
+          }
+        case LocalDateTimeArray:
+          {
+            LocalDateTime[] arr = (LocalDateTime[]) obj;
+            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
             break;
-          case TimespanArray:
-            serialize(((Timespan[]) obj)[idx], messageBuffer);
+          }
+        case TimespanArray:
+          {
+            Timespan[] arr = (Timespan[]) obj;
+            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
             break;
-          case MinuteArray:
-            serialize(((Minute[]) obj)[idx], messageBuffer);
+          }
+        case MinuteArray:
+          {
+            Minute[] arr = (Minute[]) obj;
+            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
             break;
-          case SecondArray:
-            serialize(((Second[]) obj)[idx], messageBuffer);
+          }
+        case SecondArray:
+          {
+            Second[] arr = (Second[]) obj;
+            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
             break;
-          case LocalTimeArray:
-            serialize(((LocalTime[]) obj)[idx], messageBuffer);
+          }
+        case LocalTimeArray:
+          {
+            LocalTime[] arr = (LocalTime[]) obj;
+            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
             break;
-          default:
-            throw new KdbException("Unhandled type: " + type);
-        }
+          }
+        default:
+          throw new KdbException("Unhandled type: " + type);
       }
     }
   }

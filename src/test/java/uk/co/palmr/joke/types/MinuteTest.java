@@ -15,6 +15,7 @@ package uk.co.palmr.joke.types;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -55,6 +56,6 @@ class MinuteTest {
     Minute mon3 = new Minute(1);
     assertEquals(0, mon1.compareTo(mon1));
     assertEquals(0, mon1.compareTo(mon2));
-    assertEquals(21, mon1.compareTo(mon3));
+    assertTrue(mon1.compareTo(mon3) > 0);
   }
 }

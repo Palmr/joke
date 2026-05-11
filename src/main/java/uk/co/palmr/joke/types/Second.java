@@ -51,6 +51,6 @@ public class Second implements Comparable<Second> {
 
   @Override
   public int compareTo(Second s) {
-    return i - s.i;
+    return Integer.compare(i, s.i);
   }
 }

@@ -51,6 +51,6 @@ public class Minute implements Comparable<Minute> {
 
   @Override
   public int compareTo(Minute m) {
-    return i - m.i;
+    return Integer.compare(i, m.i);
   }
 }

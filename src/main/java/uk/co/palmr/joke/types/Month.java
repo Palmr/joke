@@ -50,6 +50,6 @@ public class Month implements Comparable<Month> {
 
   @Override
   public int compareTo(Month m) {
-    return i - m.i;
+    return Integer.compare(i, m.i);
   }
 }

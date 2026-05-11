@@ -16,7 +16,6 @@ package uk.co.palmr.joke;
 import static java.time.ZoneOffset.UTC;
 import static uk.co.palmr.joke.types.DataType.Lambda;
 
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -134,181 +133,137 @@ public class KdbProtocol {
   protected void serialize(final Object obj, final ByteBuffer messageBuffer) throws KdbException {
     final DataType type = DataType.getKdbType(obj);
     messageBuffer.put(type.getTypeCode());
-    if (type.isAtom()) {
-      switch (type) {
-        case Boolean:
-          serialize(((Boolean) obj).booleanValue(), messageBuffer);
-          return;
-        case UUID:
-          serialize((UUID) obj, messageBuffer);
-          return;
-        case Byte:
-          serialize(((Byte) obj).byteValue(), messageBuffer);
-          return;
-        case Short:
-          serialize(((Short) obj).shortValue(), messageBuffer);
-          return;
-        case Integer:
-          serialize(((Integer) obj).intValue(), messageBuffer);
-          return;
-        case Long:
-          serialize(((Long) obj).longValue(), messageBuffer);
-          return;
-        case Float:
-          serialize(((Float) obj).floatValue(), messageBuffer);
-          return;
-        case Double:
-          serialize(((Double) obj).doubleValue(), messageBuffer);
-          return;
-        case Character:
-          serialize(((Character) obj).charValue(), messageBuffer);
-          return;
-        case String:
-          serialize((String) obj, messageBuffer);
-          return;
-        case Instant:
-          serialize((Instant) obj, messageBuffer);
-          return;
-        case Month:
-          serialize((Month) obj, messageBuffer);
-          return;
-        case LocalDate:
-          serialize((LocalDate) obj, messageBuffer);
-          return;
-        case LocalDateTime:
-          serialize((LocalDateTime) obj, messageBuffer);
-          return;
-        case Timespan:
-          serialize((Timespan) obj, messageBuffer);
-          return;
-        case Minute:
-          serialize((Minute) obj, messageBuffer);
-          return;
-        case Second:
-          serialize((Second) obj, messageBuffer);
-          return;
-        case LocalTime:
-          serialize((LocalTime) obj, messageBuffer);
-          return;
+    switch (obj) {
+      case Boolean b -> serialize((boolean) b, messageBuffer);
+      case UUID u -> serialize(u, messageBuffer);
+      case Byte b -> serialize((byte) b, messageBuffer);
+      case Short s -> serialize((short) s, messageBuffer);
+      case Integer i -> serialize((int) i, messageBuffer);
+      case Long l -> serialize((long) l, messageBuffer);
+      case Float f -> serialize((float) f, messageBuffer);
+      case Double d -> serialize((double) d, messageBuffer);
+      case Character c -> serialize((char) c, messageBuffer);
+      case String s -> serialize(s, messageBuffer);
+      case Instant p -> serialize(p, messageBuffer);
+      case Month m -> serialize(m, messageBuffer);
+      case LocalDate d -> serialize(d, messageBuffer);
+      case LocalDateTime z -> serialize(z, messageBuffer);
+      case Timespan n -> serialize(n, messageBuffer);
+      case Minute u -> serialize(u, messageBuffer);
+      case Second v -> serialize(v, messageBuffer);
+      case LocalTime t -> serialize(t, messageBuffer);
+      case Dict(var k, var v) -> {
+        serialize(k, messageBuffer);
+        serialize(v, messageBuffer);
       }
-    }
-
-    if (type == DataType.Dict) {
-      final Dict r = (Dict) obj;
-      serialize(r.keys(), messageBuffer);
-      serialize(r.values(), messageBuffer);
-      return;
-    }
-
-    messageBuffer.put(NULL_BYTE);
-    if (type == DataType.Flip) {
-      final Flip r = (Flip) obj;
-      messageBuffer.put(DataType.Dict.getTypeCode());
-      serialize(r.columnNames, messageBuffer);
-      serialize(r.columns, messageBuffer);
-      return;
-    }
-
-    final int numElements = elementCount(obj);
-
-    serialize(numElements, messageBuffer);
-
-    if (type == DataType.CharArray) {
-      messageBuffer.put(new String((char[]) obj).getBytes(stringEncoding));
-    } else if (type == DataType.ByteArray) {
-      messageBuffer.put((byte[]) obj);
-    } else if (type == DataType.ShortArray) {
-      messageBuffer.asShortBuffer().put((short[]) obj);
-      messageBuffer.position(messageBuffer.position() + numElements * Short.BYTES);
-    } else if (type == DataType.IntArray) {
-      messageBuffer.asIntBuffer().put((int[]) obj);
-      messageBuffer.position(messageBuffer.position() + numElements * Integer.BYTES);
-    } else if (type == DataType.LongArray) {
-      messageBuffer.asLongBuffer().put((long[]) obj);
-      messageBuffer.position(messageBuffer.position() + numElements * Long.BYTES);
-    } else if (type == DataType.FloatArray) {
-      messageBuffer.asFloatBuffer().put((float[]) obj);
-      messageBuffer.position(messageBuffer.position() + numElements * Float.BYTES);
-    } else if (type == DataType.DoubleArray) {
-      messageBuffer.asDoubleBuffer().put((double[]) obj);
-      messageBuffer.position(messageBuffer.position() + numElements * Double.BYTES);
-    } else {
-      switch (type) {
-        case List:
-          {
-            Object[] arr = (Object[]) obj;
-            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
-            break;
-          }
-        case BooleanArray:
-          {
-            boolean[] arr = (boolean[]) obj;
-            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
-            break;
-          }
-        case UUIDArray:
-          {
-            UUID[] arr = (UUID[]) obj;
-            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
-            break;
-          }
-        case StringArray:
-          {
-            String[] arr = (String[]) obj;
-            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
-            break;
-          }
-        case InstantArray:
-          {
-            Instant[] arr = (Instant[]) obj;
-            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
-            break;
-          }
-        case MonthArray:
-          {
-            Month[] arr = (Month[]) obj;
-            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
-            break;
-          }
-        case LocalDateArray:
-          {
-            LocalDate[] arr = (LocalDate[]) obj;
-            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
-            break;
-          }
-        case LocalDateTimeArray:
-          {
-            LocalDateTime[] arr = (LocalDateTime[]) obj;
-            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
-            break;
-          }
-        case TimespanArray:
-          {
-            Timespan[] arr = (Timespan[]) obj;
-            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
-            break;
-          }
-        case MinuteArray:
-          {
-            Minute[] arr = (Minute[]) obj;
-            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
-            break;
-          }
-        case SecondArray:
-          {
-            Second[] arr = (Second[]) obj;
-            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
-            break;
-          }
-        case LocalTimeArray:
-          {
-            LocalTime[] arr = (LocalTime[]) obj;
-            for (int idx = 0; idx < numElements; idx++) serialize(arr[idx], messageBuffer);
-            break;
-          }
-        default:
-          throw new KdbException("Unhandled type: " + type);
+      case Flip f -> {
+        messageBuffer.put(NULL_BYTE);
+        messageBuffer.put(DataType.Dict.getTypeCode());
+        serialize(f.columnNames, messageBuffer);
+        serialize(f.columns, messageBuffer);
       }
+      case char[] chars -> {
+        messageBuffer.put(NULL_BYTE);
+        var bytes = new String(chars).getBytes(stringEncoding);
+        serialize(bytes.length, messageBuffer);
+        messageBuffer.put(bytes);
+      }
+      case byte[] bytes -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(bytes.length, messageBuffer);
+        messageBuffer.put(bytes);
+      }
+      case short[] shorts -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(shorts.length, messageBuffer);
+        messageBuffer.asShortBuffer().put(shorts);
+        messageBuffer.position(messageBuffer.position() + shorts.length * Short.BYTES);
+      }
+      case int[] ints -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(ints.length, messageBuffer);
+        messageBuffer.asIntBuffer().put(ints);
+        messageBuffer.position(messageBuffer.position() + ints.length * Integer.BYTES);
+      }
+      case long[] longs -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(longs.length, messageBuffer);
+        messageBuffer.asLongBuffer().put(longs);
+        messageBuffer.position(messageBuffer.position() + longs.length * Long.BYTES);
+      }
+      case float[] floats -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(floats.length, messageBuffer);
+        messageBuffer.asFloatBuffer().put(floats);
+        messageBuffer.position(messageBuffer.position() + floats.length * Float.BYTES);
+      }
+      case double[] doubles -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(doubles.length, messageBuffer);
+        messageBuffer.asDoubleBuffer().put(doubles);
+        messageBuffer.position(messageBuffer.position() + doubles.length * Double.BYTES);
+      }
+      case boolean[] bools -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(bools.length, messageBuffer);
+        for (var b : bools) serialize(b, messageBuffer);
+      }
+      case UUID[] uuids -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(uuids.length, messageBuffer);
+        for (var u : uuids) serialize(u, messageBuffer);
+      }
+      case String[] strings -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(strings.length, messageBuffer);
+        for (var s : strings) serialize(s, messageBuffer);
+      }
+      case Instant[] instants -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(instants.length, messageBuffer);
+        for (var p : instants) serialize(p, messageBuffer);
+      }
+      case Month[] months -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(months.length, messageBuffer);
+        for (var m : months) serialize(m, messageBuffer);
+      }
+      case LocalDate[] dates -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(dates.length, messageBuffer);
+        for (var d : dates) serialize(d, messageBuffer);
+      }
+      case LocalDateTime[] dateTimes -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(dateTimes.length, messageBuffer);
+        for (var z : dateTimes) serialize(z, messageBuffer);
+      }
+      case Timespan[] timespans -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(timespans.length, messageBuffer);
+        for (var n : timespans) serialize(n, messageBuffer);
+      }
+      case Minute[] minutes -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(minutes.length, messageBuffer);
+        for (var u : minutes) serialize(u, messageBuffer);
+      }
+      case Second[] seconds -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(seconds.length, messageBuffer);
+        for (var v : seconds) serialize(v, messageBuffer);
+      }
+      case LocalTime[] times -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(times.length, messageBuffer);
+        for (var t : times) serialize(t, messageBuffer);
+      }
+      case Object[] objs -> {
+        messageBuffer.put(NULL_BYTE);
+        serialize(objs.length, messageBuffer);
+        for (var o : objs) serialize(o, messageBuffer);
+      }
+      default -> throw new KdbException("Unhandled type: " + type);
     }
   }
 
@@ -447,50 +402,30 @@ public class KdbProtocol {
    * @param messageBuffer incoming message buffer private @return deserialized object
    */
   protected Object deserializeResponseMessage(final ByteBuffer messageBuffer) throws KdbException {
-    int i = 0;
-    int n;
     DataType type = DataType.getKdbType(messageBuffer.get());
     if (type.isAtom())
-      switch (type) {
-        case Boolean:
-          return deserializeBoolean(messageBuffer);
-        case UUID:
-          return deserializeUuid(messageBuffer);
-        case Byte:
-          return messageBuffer.get();
-        case Short:
-          return deserializeShort(messageBuffer);
-        case Integer:
-          return messageBuffer.getInt();
-        case Long:
-          return deserializeLong(messageBuffer);
-        case Float:
-          return deserializeFloat(messageBuffer);
-        case Double:
-          return deserializeDouble(messageBuffer);
-        case Character:
-          return deserializeChar(messageBuffer);
-        case String:
-          return deserializeString(messageBuffer);
-        case Instant:
-          return deserializeInstant(messageBuffer);
-        case Month:
-          return deserializeMonth(messageBuffer);
-        case LocalDate:
-          return deserializeLocalDate(messageBuffer);
-        case LocalDateTime:
-          return deserializeLocalDateTime(messageBuffer);
-        case Timespan:
-          return deserializeTimespan(messageBuffer);
-        case Minute:
-          return deserializeMinute(messageBuffer);
-        case Second:
-          return deserializeSecond(messageBuffer);
-        case LocalTime:
-          return deserializeLocalTime(messageBuffer);
-        case Exception:
-          throw new KdbException(deserializeString(messageBuffer));
-      }
+      return switch (type) {
+        case Boolean -> deserializeBoolean(messageBuffer);
+        case UUID -> deserializeUuid(messageBuffer);
+        case Byte -> messageBuffer.get();
+        case Short -> deserializeShort(messageBuffer);
+        case Integer -> messageBuffer.getInt();
+        case Long -> deserializeLong(messageBuffer);
+        case Float -> deserializeFloat(messageBuffer);
+        case Double -> deserializeDouble(messageBuffer);
+        case Character -> deserializeChar(messageBuffer);
+        case String -> deserializeString(messageBuffer);
+        case Instant -> deserializeInstant(messageBuffer);
+        case Month -> deserializeMonth(messageBuffer);
+        case LocalDate -> deserializeLocalDate(messageBuffer);
+        case LocalDateTime -> deserializeLocalDateTime(messageBuffer);
+        case Timespan -> deserializeTimespan(messageBuffer);
+        case Minute -> deserializeMinute(messageBuffer);
+        case Second -> deserializeSecond(messageBuffer);
+        case LocalTime -> deserializeLocalTime(messageBuffer);
+        case Exception -> throw new KdbException(deserializeString(messageBuffer));
+        default -> throw new IllegalStateException("Unexpected atom type: " + type);
+      };
     if (type.getTypeCode() > DataType.Dict.getTypeCode()) {
       if (type == Lambda) {
         deserializeString(messageBuffer);
@@ -502,7 +437,7 @@ public class KdbProtocol {
       if (type.getTypeCode() > DataType.Composition.getTypeCode()) {
         deserializeResponseMessage(messageBuffer);
       } else {
-        for (n = messageBuffer.getInt(); i < n; i++) {
+        for (var n = messageBuffer.getInt(); n > 0; n--) {
           deserializeResponseMessage(messageBuffer);
         }
       }
@@ -517,97 +452,114 @@ public class KdbProtocol {
     if (type == DataType.Flip) {
       return new Flip((Dict) deserializeResponseMessage(messageBuffer));
     }
-    n = messageBuffer.getInt();
-    switch (type) {
-      case List:
-        Object[] objArr = new Object[n];
-        for (; i < n; i++) objArr[i] = deserializeResponseMessage(messageBuffer);
-        return objArr;
-      case BooleanArray:
-        boolean[] boolArr = new boolean[n];
-        for (; i < n; i++) boolArr[i] = deserializeBoolean(messageBuffer);
-        return boolArr;
-      case UUIDArray:
-        UUID[] uuidArr = new UUID[n];
-        for (; i < n; i++) uuidArr[i] = deserializeUuid(messageBuffer);
-        return uuidArr;
-      case ByteArray:
-        byte[] byteArr = new byte[n];
-        messageBuffer.get(byteArr);
-        return byteArr;
-      case ShortArray:
-        short[] shortArr = new short[n];
-        messageBuffer.asShortBuffer().get(shortArr);
+    var n = messageBuffer.getInt();
+    return switch (type) {
+      case List -> {
+        var arr = new Object[n];
+        for (int j = 0; j < n; j++) arr[j] = deserializeResponseMessage(messageBuffer);
+        yield arr;
+      }
+      case BooleanArray -> {
+        var arr = new boolean[n];
+        for (int j = 0; j < n; j++) arr[j] = deserializeBoolean(messageBuffer);
+        yield arr;
+      }
+      case UUIDArray -> {
+        var arr = new UUID[n];
+        for (int j = 0; j < n; j++) arr[j] = deserializeUuid(messageBuffer);
+        yield arr;
+      }
+      case ByteArray -> {
+        var arr = new byte[n];
+        messageBuffer.get(arr);
+        yield arr;
+      }
+      case ShortArray -> {
+        var arr = new short[n];
+        messageBuffer.asShortBuffer().get(arr);
         messageBuffer.position(messageBuffer.position() + n * Short.BYTES);
-        return shortArr;
-      case IntArray:
-        int[] intArr = new int[n];
-        messageBuffer.asIntBuffer().get(intArr);
+        yield arr;
+      }
+      case IntArray -> {
+        var arr = new int[n];
+        messageBuffer.asIntBuffer().get(arr);
         messageBuffer.position(messageBuffer.position() + n * Integer.BYTES);
-        return intArr;
-      case LongArray:
-        long[] longArr = new long[n];
-        messageBuffer.asLongBuffer().get(longArr);
+        yield arr;
+      }
+      case LongArray -> {
+        var arr = new long[n];
+        messageBuffer.asLongBuffer().get(arr);
         messageBuffer.position(messageBuffer.position() + n * Long.BYTES);
-        return longArr;
-      case FloatArray:
-        float[] floatArr = new float[n];
-        messageBuffer.asFloatBuffer().get(floatArr);
+        yield arr;
+      }
+      case FloatArray -> {
+        var arr = new float[n];
+        messageBuffer.asFloatBuffer().get(arr);
         messageBuffer.position(messageBuffer.position() + n * Float.BYTES);
-        return floatArr;
-      case DoubleArray:
-        double[] doubleArr = new double[n];
-        messageBuffer.asDoubleBuffer().get(doubleArr);
+        yield arr;
+      }
+      case DoubleArray -> {
+        var arr = new double[n];
+        messageBuffer.asDoubleBuffer().get(arr);
         messageBuffer.position(messageBuffer.position() + n * Double.BYTES);
-        return doubleArr;
-      case CharArray:
-        char[] charArr =
+        yield arr;
+      }
+      case CharArray -> {
+        var arr =
             stringEncoding
                 .decode(messageBuffer.slice(messageBuffer.position(), n))
                 .toString()
                 .toCharArray();
         messageBuffer.position(messageBuffer.position() + n);
-        return charArr;
-      case StringArray:
-        String[] stringArr = new String[n];
-        for (; i < n; i++) stringArr[i] = deserializeString(messageBuffer);
-        return stringArr;
-      case InstantArray:
-        Instant[] timestampArr = new Instant[n];
-        for (; i < n; i++) timestampArr[i] = deserializeInstant(messageBuffer);
-        return timestampArr;
-      case MonthArray:
-        Month[] monthArr = new Month[n];
-        for (; i < n; i++) monthArr[i] = deserializeMonth(messageBuffer);
-        return monthArr;
-      case LocalDateArray:
-        LocalDate[] dateArr = new LocalDate[n];
-        for (; i < n; i++) dateArr[i] = deserializeLocalDate(messageBuffer);
-        return dateArr;
-      case LocalDateTimeArray:
-        LocalDateTime[] dateUtilArr = new LocalDateTime[n];
-        for (; i < n; i++) dateUtilArr[i] = deserializeLocalDateTime(messageBuffer);
-        return dateUtilArr;
-      case TimespanArray:
-        Timespan[] timespanArr = new Timespan[n];
-        for (; i < n; i++) timespanArr[i] = deserializeTimespan(messageBuffer);
-        return timespanArr;
-      case MinuteArray:
-        Minute[] minArr = new Minute[n];
-        for (; i < n; i++) minArr[i] = deserializeMinute(messageBuffer);
-        return minArr;
-      case SecondArray:
-        Second[] secArr = new Second[n];
-        for (; i < n; i++) secArr[i] = deserializeSecond(messageBuffer);
-        return secArr;
-      case LocalTimeArray:
-        LocalTime[] timeArr = new LocalTime[n];
-        for (; i < n; i++) timeArr[i] = deserializeLocalTime(messageBuffer);
-        return timeArr;
-      default:
-        // do nothing, let it return null
-    }
-    return null;
+        yield arr;
+      }
+      case StringArray -> {
+        var arr = new String[n];
+        for (int j = 0; j < n; j++) arr[j] = deserializeString(messageBuffer);
+        yield arr;
+      }
+      case InstantArray -> {
+        var arr = new Instant[n];
+        for (int j = 0; j < n; j++) arr[j] = deserializeInstant(messageBuffer);
+        yield arr;
+      }
+      case MonthArray -> {
+        var arr = new Month[n];
+        for (int j = 0; j < n; j++) arr[j] = deserializeMonth(messageBuffer);
+        yield arr;
+      }
+      case LocalDateArray -> {
+        var arr = new LocalDate[n];
+        for (int j = 0; j < n; j++) arr[j] = deserializeLocalDate(messageBuffer);
+        yield arr;
+      }
+      case LocalDateTimeArray -> {
+        var arr = new LocalDateTime[n];
+        for (int j = 0; j < n; j++) arr[j] = deserializeLocalDateTime(messageBuffer);
+        yield arr;
+      }
+      case TimespanArray -> {
+        var arr = new Timespan[n];
+        for (int j = 0; j < n; j++) arr[j] = deserializeTimespan(messageBuffer);
+        yield arr;
+      }
+      case MinuteArray -> {
+        var arr = new Minute[n];
+        for (int j = 0; j < n; j++) arr[j] = deserializeMinute(messageBuffer);
+        yield arr;
+      }
+      case SecondArray -> {
+        var arr = new Second[n];
+        for (int j = 0; j < n; j++) arr[j] = deserializeSecond(messageBuffer);
+        yield arr;
+      }
+      case LocalTimeArray -> {
+        var arr = new LocalTime[n];
+        for (int j = 0; j < n; j++) arr[j] = deserializeLocalTime(messageBuffer);
+        yield arr;
+      }
+      default -> null;
+    };
   }
 
   /**
@@ -773,25 +725,5 @@ public class KdbProtocol {
 
   private byte[] encodeString(final String string) {
     return string.getBytes(stringEncoding);
-  }
-
-  /**
-   * A helper function used by nx which returns the number of elements in the supplied object (for
-   * example: the number of keys in a Dict, the number of rows in a Flip, the length of the array if
-   * its an array type)
-   *
-   * @param obj Object to be serialized
-   * @return number of elements in an object.
-   */
-  private int elementCount(final Object obj) {
-    if (obj instanceof Dict) {
-      return elementCount(((Dict) obj).keys());
-    }
-    if (obj instanceof Flip) {
-      return elementCount(((Flip) obj).columns[0]);
-    }
-    return obj instanceof char[]
-        ? new String((char[]) obj).getBytes(stringEncoding).length
-        : Array.getLength(obj);
   }
 }

@@ -32,6 +32,7 @@ public class Example1 {
       arrayExamples(client);
       tableExamples(client);
       dictExample(client);
+      enumExample(client);
       errorHandlingExample(client);
     } catch (KdbException | IOException e) {
       throw new RuntimeException(e);
@@ -126,6 +127,30 @@ public class Example1 {
     for (int i = 0; i < keys.length; i++) {
       System.out.printf("  %-6s %.2f%n", keys[i], values[i]);
     }
+  }
+
+  private static void enumExample(KdbClient client) throws KdbException, IOException {
+    System.out.println("\n=== Enum Vector ===");
+
+    // Create an enum domain and a standalone enum vector.
+    // In a tickerplant the sym domain grows via: sym?newSymbols
+    client.send("exsym:`symbol$()");
+    client.send("esym:`exsym?`AAPL`GOOG`MSFT`AAPL`GOOG");
+
+    // KDB+ resolves enum columns to their underlying symbol values before IPC serialization,
+    // so enum data arrives as String[] regardless of whether it is enumerated on the server.
+    // (`type esym` in q returns 20h, but -8!esym serializes it as type 11 — a sym vector.)
+    String[] syms = (String[]) client.send("esym");
+    System.out.println("Standalone enum: " + Arrays.toString(syms));
+
+    // Enum column in a table — same: arrives as String[]
+    client.send("etrades:([] sym:esym; qty:100 200 300 150 250)");
+    Flip etrades = (Flip) client.send("etrades");
+    System.out.println("Table enum col:  " + Arrays.toString((String[]) etrades.at("sym")));
+
+    client.send("delete etrades from `.");
+    client.send("delete esym from `.");
+    client.send("delete exsym from `.");
   }
 
   private static void errorHandlingExample(KdbClient client) throws IOException {

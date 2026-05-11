@@ -21,26 +21,26 @@ Compared against the [official KxSystems Java driver](https://github.com/KxSyste
 
 ### Serialize
 
-| Operation | Joke (µs/op) | Official (µs/op) | Speedup | Joke alloc (B/op) | Official alloc (B/op) |
-|-----------|-------------:|-----------------:|--------:|------------------:|----------------------:|
-| `long[]`   | 1.9          | 15.9             | **8.4x**  | ~0                | 80,032                |
-| `double[]` | 1.9          | 23.3             | **12.3x** | ~0                | 80,032                |
-| `String[]` | 91.0         | 157.8            | **1.7x**  | 240,000           | 558,920               |
+| Operation  | Joke (µs/op) | Official (µs/op) | Speedup   | Joke alloc (B/op) | Official alloc (B/op) |
+|------------|-------------:|-----------------:|----------:|------------------:|----------------------:|
+| `long[]`   | 1.9          | 15.9             | **8.5x**  | ~0                | 80,032                |
+| `double[]` | 1.9          | 23.3             | **12.1x** | ~0                | 80,032                |
+| `String[]` | 90.8         | 156.8            | **1.7x**  | 240,000           | 558,920               |
 
 Joke serializes into a reused `ByteBuffer`, so primitive array serialization allocates nothing.
 The official driver allocates a fresh `byte[]` on every call.
 
 ### Deserialize
 
-| Operation  | Joke (µs/op) | Official (µs/op) | Speedup   | Joke alloc (B/op) | Official alloc (B/op) |
-|------------|-------------:|-----------------:|----------:|------------------:|----------------------:|
-| `long[]`   | 5.3          | 25.3             | **4.8x**  | 80,016            | 80,016                |
-| `double[]` | 5.3          | 25.4             | **4.8x**  | 80,072            | 80,016                |
-| `String[]` | 169.6        | 94.5             | **0.6x**  | 760,016           | 520,016               |
+| Operation  | Joke (µs/op) | Official (µs/op) | Speedup  | Joke alloc (B/op) | Official alloc (B/op) |
+|------------|-------------:|-----------------:|---------:|------------------:|----------------------:|
+| `long[]`   | 5.3          | 25.2             | **4.8x** | 80,016            | 80,016                |
+| `double[]` | 5.3          | 25.1             | **4.7x** | 80,072            | 80,016                |
+| `String[]` | 103.5        | 94.6             | **0.9x** | 520,016           | 520,016               |
 
 Primitive array deserialization uses bulk `ByteBuffer` reads, giving a ~5x speedup with identical
-allocation (the output array itself is unavoidable). Symbol (`String[]`) deserialization is currently
-slower than the official driver and allocates more — an area for future improvement.
+allocation (the output array itself is unavoidable). Symbol (`String[]`) deserialization now matches
+the official driver on allocation; the small remaining time gap (~10%) is the only outstanding delta.
 
 ## Local Development Setup
 

@@ -76,6 +76,7 @@ publishing {
 
 spotless {
     java {
+        targetExclude("src/jmh/java/com/kx/c.java")
         googleJavaFormat("1.27.0")
         removeUnusedImports()
         trimTrailingWhitespace()
